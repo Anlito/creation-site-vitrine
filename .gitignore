@@ -1,0 +1,7 @@
+node_modules
+dist
+livrables
+# Fichiers de design reçus : gardés en local, non publiés.
+maquettes
+# Réglages locaux de l'éditeur
+.claude

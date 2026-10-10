@@ -1,0 +1,65 @@
+{
+  "_commentaire": "Symboles du logo, par catégorie : [nom Material Symbols Rounded, nom en français]. Lu par l'outil et par scripts/build-icons.mjs.",
+  "categories": [
+    { "nom": "Nature", "symboles": [
+      ["eco", "Feuille"], ["local_florist", "Fleur"], ["potted_plant", "Plante en pot"], ["park", "Arbre"], ["forest", "Forêt"],
+      ["spa", "Lotus"], ["grass", "Herbe"], ["nature", "Arbre rond"], ["yard", "Jardin"], ["compost", "Compost"],
+      ["recycling", "Recyclage"], ["water_drop", "Goutte d'eau"], ["sunny", "Soleil"], ["ac_unit", "Flocon"], ["cloud", "Nuage"],
+      ["rainy", "Pluie"], ["energy_savings_leaf", "Feuille énergie"], ["psychiatry", "Pousse"], ["filter_vintage", "Fleur ronde"], ["emoji_nature", "Abeille et fleur"]
+    ]},
+    { "nom": "Alimentation", "symboles": [
+      ["local_cafe", "Tasse"], ["coffee", "Café"], ["cake", "Gâteau"], ["cookie", "Biscuit"], ["icecream", "Glace"],
+      ["bakery_dining", "Croissant"], ["lunch_dining", "Burger"], ["local_pizza", "Pizza"], ["ramen_dining", "Bol de nouilles"], ["egg", "Œuf"],
+      ["nutrition", "Pomme"], ["set_meal", "Plateau repas"], ["kebab_dining", "Brochette"], ["tapas", "Tapas"], ["restaurant", "Couverts"],
+      ["local_dining", "Restaurant"], ["emoji_food_beverage", "Théière"], ["blender", "Mixeur"], ["soup_kitchen", "Soupe"]
+    ]},
+    { "nom": "Mode et beauté", "symboles": [
+      ["checkroom", "Cintre"], ["apparel", "Tee-shirt"], ["styler", "Robe"], ["steps", "Chaussures"], ["dry_cleaning", "Pressing"],
+      ["laundry", "Linge"], ["diamond", "Diamant"], ["watch", "Montre"], ["eyeglasses", "Lunettes"], ["self_care", "Soin"],
+      ["health_and_beauty", "Beauté"], ["face", "Visage"]
+    ]},
+    { "nom": "Loisirs et jeux", "symboles": [
+      ["sports_esports", "Manette"], ["videogame_asset", "Console"], ["toys", "Jouet"], ["toys_fan", "Moulin à vent"], ["casino", "Dé"],
+      ["extension", "Puzzle"], ["smart_toy", "Robot jouet"], ["celebration", "Fête"], ["theater_comedy", "Théâtre"], ["movie", "Cinéma"],
+      ["auto_stories", "Livre ouvert"], ["menu_book", "Livre"], ["local_library", "Bibliothèque"]
+    ]},
+    { "nom": "Sport", "symboles": [
+      ["sports_soccer", "Ballon de foot"], ["sports_basketball", "Basket"], ["sports_tennis", "Tennis"], ["sports_handball", "Handball"], ["skateboarding", "Skate"],
+      ["surfing", "Surf"], ["pool", "Natation"], ["hiking", "Randonnée"], ["directions_bike", "Vélo"], ["fitness_center", "Musculation"],
+      ["snowboarding", "Snowboard"], ["kayaking", "Kayak"], ["sports_martial_arts", "Arts martiaux"]
+    ]},
+    { "nom": "Musique et art", "symboles": [
+      ["music_note", "Note de musique"], ["headphones", "Casque audio"], ["piano", "Piano"], ["mic", "Micro"], ["album", "Disque"],
+      ["palette", "Palette de peinture"], ["brush", "Pinceau"], ["draw", "Dessin"], ["edit_note", "Carnet"], ["photo_camera", "Appareil photo"]
+    ]},
+    { "nom": "Maison", "symboles": [
+      ["home", "Maison"], ["cottage", "Chalet"], ["chair", "Chaise"], ["weekend", "Canapé"], ["bed", "Lit"],
+      ["light", "Suspension"], ["lightbulb", "Ampoule"], ["floor_lamp", "Lampadaire"], ["table_restaurant", "Table"], ["kitchen", "Réfrigérateur"],
+      ["shower", "Douche"], ["handyman", "Outils"], ["construction", "Chantier"], ["build", "Clé"]
+    ]},
+    { "nom": "Technologie", "symboles": [
+      ["devices", "Appareils"], ["computer", "Ordinateur"], ["headset_mic", "Casque micro"], ["memory", "Puce"], ["rocket_launch", "Fusée"],
+      ["rocket", "Fusée au sol"], ["satellite_alt", "Satellite"], ["robot_2", "Robot"], ["science", "Science"], ["biotech", "Microscope"],
+      ["precision_manufacturing", "Bras robot"], ["bolt", "Éclair"]
+    ]},
+    { "nom": "Animaux", "symboles": [
+      ["pets", "Patte"], ["cruelty_free", "Lapin"], ["flutter_dash", "Oiseau"], ["raven", "Corbeau"], ["owl", "Hibou"],
+      ["sound_detection_dog_barking", "Chien"], ["pest_control", "Insecte"], ["bug_report", "Coccinelle"]
+    ]},
+    { "nom": "Commerce", "symboles": [
+      ["storefront", "Boutique"], ["store", "Magasin"], ["shopping_bag", "Sac de courses"], ["shopping_cart", "Chariot"], ["local_mall", "Sac cadeau"],
+      ["redeem", "Cadeau"], ["sell", "Étiquette"], ["loyalty", "Fidélité"], ["payments", "Billets"], ["savings", "Tirelire"],
+      ["inventory_2", "Carton"], ["package_2", "Colis"], ["handshake", "Poignée de main"], ["volunteer_activism", "Main et cœur"]
+    ]},
+    { "nom": "Voyage", "symboles": [
+      ["flight", "Avion"], ["sailing", "Voilier"], ["directions_car", "Voiture"], ["train", "Train"], ["beach_access", "Parasol"],
+      ["luggage", "Valise"], ["public", "Planète"], ["explore", "Boussole"], ["map", "Carte"], ["anchor", "Ancre"]
+    ]},
+    { "nom": "Formes et signes", "symboles": [
+      ["favorite", "Cœur"], ["star", "Étoile"], ["crown", "Couronne"], ["workspace_premium", "Médaille"], ["hexagon", "Hexagone"],
+      ["pentagon", "Pentagone"], ["circle", "Cercle"], ["square", "Carré"], ["change_history", "Triangle"], ["heart_plus", "Cœur plus"],
+      ["sentiment_very_satisfied", "Sourire"], ["mood", "Visage content"], ["local_fire_department", "Flamme"], ["school", "Diplôme"], ["groups", "Groupe"],
+      ["child_care", "Bébé"], ["stroller", "Poussette"]
+    ]}
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "vitrine",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "icons": "node scripts/build-icons.mjs",
+    "build": "node scripts/build-icons.mjs && tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "livrable": "npm run build && node scripts/livrable.mjs"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@fontsource/archivo": "^5.3.0",
+    "@fontsource/atkinson-hyperlegible": "^5.3.0",
+    "@fontsource/baloo-2": "^5.3.0",
+    "@fontsource/bree-serif": "^5.3.0",
+    "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/chakra-petch": "^5.3.0",
+    "@fontsource/instrument-sans": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/lexend": "^5.3.0",
+    "@fontsource/literata": "^5.3.0",
+    "@fontsource/nunito": "^5.3.0",
+    "@fontsource/pacifico": "^5.3.0",
+    "@fontsource/quicksand": "^5.3.0",
+    "@fontsource/source-sans-3": "^5.3.0",
+    "@fontsource/space-mono": "^5.3.0",
+    "@fontsource/work-sans": "^5.3.0",
+    "@material-symbols/svg-400": "^0.47.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}

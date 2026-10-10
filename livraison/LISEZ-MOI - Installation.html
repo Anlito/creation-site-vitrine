@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitrine · Installation dans une classe</title>
+<style>
+  :root{--action:#2346D6;--texte:#1B1F27;--texte2:#4A5160;--bord:#D5D8DE;--fond:#F4F5F7;--clair:#E8EDFF;--alerte:#FFF3D6;--alerte-bord:#E8B645;--ok:#E6F4EA}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fond);color:var(--texte);font:16px/1.55 "Segoe UI",Arial,sans-serif}
+  main{max-width:860px;margin:0 auto;padding:40px 32px 64px;background:#fff;min-height:100vh}
+  header{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--action);padding-bottom:18px;margin-bottom:28px}
+  .v{width:52px;height:52px;border-radius:12px;background:var(--action);color:#fff;display:grid;place-items:center;font-weight:700;font-size:28px;flex:0 0 auto}
+  h1{margin:0;font-size:30px;line-height:1.15}
+  header p{margin:2px 0 0;color:var(--texte2)}
+  h2{font-size:22px;margin:36px 0 10px;padding-top:6px;border-top:1px solid var(--bord)}
+  h3{font-size:18px;margin:20px 0 6px}
+  ol,ul{padding-left:24px}
+  li{margin:4px 0}
+  code,.chemin{font-family:Consolas,monospace;font-size:15px;background:var(--fond);border:1px solid var(--bord);border-radius:4px;padding:1px 6px}
+  pre{font-family:Consolas,monospace;font-size:15px;background:var(--fond);border:1px solid var(--bord);border-radius:8px;padding:14px 16px;line-height:1.45;overflow:auto}
+  .encadre{border-radius:10px;padding:14px 16px;margin:14px 0}
+  .info{background:var(--clair);border:1px solid #B9C6F7}
+  .alerte{background:var(--alerte);border:1px solid var(--alerte-bord)}
+  .ok{background:var(--ok);border:1px solid #1C7C3C}
+  table{border-collapse:collapse;width:100%;margin:10px 0}
+  th,td{border:1px solid var(--bord);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--fond)}
+  .case{display:inline-block;width:16px;height:16px;border:2px solid var(--texte2);border-radius:3px;margin-right:8px;vertical-align:-3px}
+  .sommaire{columns:2;gap:24px;padding-left:20px}
+  footer{margin-top:40px;color:var(--texte2);font-size:14px;border-top:1px solid var(--bord);padding-top:12px}
+  @media print{
+    body{background:#fff;font-size:12pt}
+    main{padding:0;max-width:none}
+    h2{break-after:avoid}
+    .encadre,table,pre{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <span class="v">V</span>
+  <div>
+    <h1>Vitrine · Installation dans une classe</h1>
+    <p>Outil de création de site vitrine · Projet de technologie « Concept Store 4.0 » · 4e · Version {{VERSION}} du {{DATE}}</p>
+  </div>
+</header>
+
+<div class="encadre info">
+  <strong>En bref :</strong> Vitrine tient dans <strong>un seul fichier</strong> (<code>index.html</code>). Rien à installer, aucun compte, aucune connexion internet nécessaire, aucune donnée envoyée sur internet.
+  Il suffit de copier le dossier <code>Vitrine</code> sur le serveur de la classe, puis d'ouvrir <code>index.html</code> avec Chrome ou Edge.
+</div>
+
+<h2>Sommaire</h2>
+<ol class="sommaire">
+  <li>Contenu du livrable</li>
+  <li>Installer sur le serveur d'une classe</li>
+  <li>Donner l'accès aux élèves</li>
+  <li>Navigateurs</li>
+  <li>Vérifier l'installation (5 minutes)</li>
+  <li>Espace enseignant</li>
+  <li>Mettre à jour Vitrine</li>
+  <li>Dépannage</li>
+  <li>Données et confidentialité</li>
+</ol>
+
+<h2>1. Contenu du livrable</h2>
+<table>
+  <tr><th>Élément</th><th>Rôle</th></tr>
+  <tr><td><code>Vitrine/index.html</code></td><td>L'outil complet (polices et icônes comprises). C'est le seul fichier nécessaire.</td></tr>
+  <tr><td><code>LISEZ-MOI - Installation.html</code></td><td>Ce document.</td></tr>
+  <tr><td><code>Fiche élève - Bien démarrer.html</code></td><td>Une page A4 à imprimer ou à projeter pour la première séance.</td></tr>
+</table>
+
+<h2>2. Installer sur le serveur d'une classe</h2>
+<p>À faire une fois par classe (par exemple pour <span class="chemin">4A</span>, <span class="chemin">4B</span>…). Arborescence conseillée, dans le dossier commun de la classe :</p>
+<pre>4X
+└─ Commun
+   └─ TECHNOLOGIE
+      └─ CONCEPT STORE
+         ├─ Vitrine            ← l'outil : copier ici le dossier « Vitrine » du livrable
+         │  └─ index.html
+         ├─ Inès               ← un dossier par élève (ou par groupe),
+         ├─ Hugo                  où chacun enregistre son fichier .vitrine
+         └─ …</pre>
+<ol>
+  <li>Copier le dossier <code>Vitrine</code> du livrable dans <span class="chemin">4X › Commun › TECHNOLOGIE › CONCEPT STORE</span>.</li>
+  <li>Créer (ou vérifier) un dossier par élève, à son prénom, au même endroit. Les élèves doivent pouvoir <strong>écrire</strong> dans leur dossier.</li>
+  <li>Conseillé : mettre le dossier <code>Vitrine</code> en <strong>lecture seule</strong> pour les élèves, pour éviter qu'il soit supprimé ou modifié par erreur.</li>
+  <li>Ouvrir <code>Vitrine/index.html</code> sur un poste élève pour vérifier (voir la partie 5).</li>
+</ol>
+<div class="encadre info">
+  <strong>Le chemin conseillé est rappelé aux élèves dans l'outil</strong> (« Range ton projet dans : 4B › Commun › TECHNOLOGIE › CONCEPT STORE › ton prénom »).
+  Le nom de la classe vient de ce que l'élève saisit au début (« 4e B » devient « 4B »).
+</div>
+
+<h3>Variante : serveur web (intranet, ENT)</h3>
+<p>Vitrine fonctionne aussi déposé sur un serveur web. Attention : pour que les élèves puissent <strong>choisir leur dossier d'enregistrement</strong>, l'adresse doit commencer par <code>https://</code>. En <code>http://</code> simple, le navigateur bloque cette fonction et les projets sont enregistrés dans le dossier Téléchargements (les élèves doivent alors les déplacer eux-mêmes).</p>
+
+<h2>3. Donner l'accès aux élèves</h2>
+<ul>
+  <li><strong>Le plus simple :</strong> les élèves ouvrent <span class="chemin">CONCEPT STORE › Vitrine › index.html</span> par double-clic.</li>
+  <li><strong>Raccourci sur le bureau :</strong> clic droit sur <code>index.html</code> › <em>Afficher d'autres options</em> › <em>Envoyer vers</em> › <em>Bureau (créer un raccourci)</em>, puis renommer le raccourci « Vitrine ». Ce raccourci peut être déployé par le service informatique (GPO).</li>
+  <li><strong>Favori :</strong> une fois <code>index.html</code> ouvert dans Chrome ou Edge, ajouter la page aux favoris (Ctrl + D).</li>
+</ul>
+
+<h2>4. Navigateurs</h2>
+<table>
+  <tr><th>Navigateur</th><th>Fonctionne ?</th><th>Enregistrement du projet</th></tr>
+  <tr><td><strong>Google Chrome</strong> (recommandé)</td><td>Oui</td><td>L'élève choisit son dossier ; « Enregistrer » met ensuite à jour le même fichier.</td></tr>
+  <tr><td><strong>Microsoft Edge</strong> (recommandé)</td><td>Oui</td><td>Comme Chrome.</td></tr>
+  <tr><td>Mozilla Firefox</td><td>Oui</td><td>Le fichier part dans Téléchargements ; l'outil dit à l'élève où le déplacer.</td></tr>
+</table>
+<p>Écran conseillé : 1366 × 768 ou plus, avec souris et clavier.</p>
+
+<h2>5. Vérifier l'installation (5 minutes, sur un poste élève)</h2>
+<p><span class="case"></span>Ouvrir <code>Vitrine/index.html</code> : l'accueil « Crée le site de ton concept store » s'affiche.</p>
+<p><span class="case"></span>« Créer un nouveau projet » : saisir un nom, une classe et des prénoms de test.</p>
+<p><span class="case"></span>Cliquer sur « Enregistrer » : la fenêtre « Enregistrer sous » s'ouvre. Choisir un dossier élève sur le serveur et enregistrer.<br>
+   → Si un message indique que le fichier est parti dans Téléchargements, voir « Dépannage ».</p>
+<p><span class="case"></span>Recharger la page (F5), cliquer sur « Ouvrir mon projet » et rouvrir le fichier : le projet revient.</p>
+<p><span class="case"></span>Onglet « Vérifier et exporter » › « Exporter mon site » : un fichier .zip arrive dans Téléchargements ; l'ouvrir et double-cliquer sur <code>index.html</code>.</p>
+<p><span class="case"></span>Lien « Espace enseignant » (en bas à droite de l'accueil) : le mot de passe est demandé.</p>
+<p>Supprimer ensuite le fichier de test.</p>
+
+<h2>6. Espace enseignant</h2>
+<ul>
+  <li>Accès : lien « Espace enseignant » en bas à droite de l'accueil. <strong>Mot de passe : 2534.</strong> Il est demandé une fois par séance ; le bouton « Verrouiller » le redemande aussitôt.</li>
+  <li>« Ouvrir un projet » : choisir le fichier <code>.vitrine</code> d'un élève. Le site s'affiche en lecture seule, avec le contrôle automatique (9 points) et la grille sur 20.</li>
+  <li>Les évaluations sont gardées <strong>dans le navigateur du poste</strong> où elles sont faites : évaluer toute la classe sur le même poste (de préférence le poste enseignant), puis « Exporter en CSV » (s'ouvre directement dans Excel).</li>
+</ul>
+<div class="encadre alerte">
+  <strong>À savoir :</strong> l'outil fonctionne sans serveur, donc ce mot de passe empêche surtout d'entrer par curiosité ; ce n'est pas une protection forte. Éviter d'évaluer sur un poste élève.
+</div>
+
+<h2>7. Mettre à jour Vitrine</h2>
+<ol>
+  <li>Remplacer <code>Vitrine/index.html</code> par la nouvelle version, dans chaque classe.</li>
+  <li>Demander aux élèves de recharger la page (F5) si l'outil était déjà ouvert.</li>
+</ol>
+<p>Les projets <code>.vitrine</code> déjà enregistrés restent compatibles : ils s'ouvrent dans la nouvelle version.</p>
+
+<h2>8. Dépannage</h2>
+<table>
+  <tr><th>Situation</th><th>Solution</th></tr>
+  <tr><td>« Enregistrer » ne propose pas de choisir le dossier ; le fichier part dans Téléchargements.</td><td>Utiliser Chrome ou Edge. Si c'est déjà le cas, le navigateur n'a peut-être pas le droit d'écrire sur le lecteur réseau : l'élève déplace alors son fichier de Téléchargements vers son dossier (l'outil le lui indique). À signaler au service informatique.</td></tr>
+  <tr><td>« Ce fichier ne peut pas être ouvert. »</td><td>L'élève a choisi un autre fichier : il faut celui qui se termine par <code>.vitrine</code>.</td></tr>
+  <tr><td>Un élève a fermé l'onglet sans enregistrer.</td><td>Le travail depuis le dernier enregistrement est perdu. Le navigateur demande une confirmation avant de fermer : rappeler d'enregistrer souvent.</td></tr>
+  <tr><td>Une image est refusée ou très lente.</td><td>Les images de plus de 1 Mo sont réduites automatiquement ; préférer des photos JPG ou PNG.</td></tr>
+  <tr><td>L'affichage est coupé ou trop serré.</td><td>Agrandir la fenêtre du navigateur, ou revenir au zoom 100 % (Ctrl + 0).</td></tr>
+  <tr><td>Les élèves ne savent pas par où commencer.</td><td>Bouton « Aide » en haut à droite : visite guidée de chaque partie et questions fréquentes. Imprimer la fiche élève.</td></tr>
+</table>
+
+<h2>9. Données et confidentialité</h2>
+<ul>
+  <li>Aucun compte, aucune adresse e-mail, aucun serveur : rien n'est envoyé sur internet.</li>
+  <li>Le travail de l'élève est dans son fichier <code>.vitrine</code>, sur le serveur de la classe (prénoms du groupe, textes et images du projet).</li>
+  <li>Les polices et les icônes sont incluses dans l'outil ; les polices importées par les élèves (Google Fonts) sont téléchargées par eux puis rangées dans leur projet.</li>
+  <li>Le formulaire de contact des sites créés est un exemple : il n'envoie aucun message.</li>
+</ul>
+
+<footer>Vitrine {{VERSION}} · livrable généré le {{DATE}}.</footer>
+</main>
+</body>
+</html>

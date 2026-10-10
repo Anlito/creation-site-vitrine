@@ -1,0 +1,169 @@
+/* Styles du site généré. Mise en page fixe : l'élève ne règle que les variables de la charte.
+   Utilisé tel quel dans l'aperçu de l'outil et dans le site exporté. */
+.site{container:site / inline-size;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:18px;line-height:1.5;display:flex;flex-direction:column;min-height:100%;text-align:left;-webkit-font-smoothing:antialiased}
+.site *,.site *::before,.site *::after{box-sizing:border-box}
+.site a{color:inherit}
+.site a:focus-visible,.site summary:focus-visible{outline:3px solid var(--pri);outline-offset:3px;border-radius:2px}
+.site .ic{display:inline-block;flex:0 0 auto;vertical-align:middle}
+.s-h{font-family:var(--fh);font-weight:var(--hw);text-transform:var(--ht);letter-spacing:var(--ls)}
+
+/* En-tête */
+.s-top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(20px,4cqw,56px);border-bottom:1px solid var(--line);background:var(--bg);z-index:5}
+.s-logo-lien{text-decoration:none;flex:0 0 auto;min-width:0;max-width:55%}
+.s-nav{flex:1 1 auto;min-width:0}
+.s-logo{display:flex;align-items:center;gap:10px;min-width:0}
+.s-logo-marque{width:44px;height:44px;border-radius:var(--lr);background:var(--pri);color:var(--onpri);display:grid;place-items:center;flex:0 0 auto}
+.s-logo-marque.rond{background:transparent;color:var(--pri);border:3px solid var(--pri);border-radius:50%}
+.s-logo-marque.un-ton{background:var(--ink);color:var(--bg)}
+.s-logo-marque.rond.un-ton{background:transparent;color:var(--ink);border-color:var(--ink)}
+.s-logo-textes{display:flex;flex-direction:column;min-width:0}
+.s-logo-sous{font-size:16px;line-height:1.2;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-logo-img{height:44px;width:auto;max-width:120px;object-fit:contain}
+.s-logo-nom{font-family:var(--fh);font-weight:var(--hw);font-size:24px;line-height:1.1;text-transform:var(--ht);letter-spacing:var(--ls);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-logo-pied .s-logo-marque{width:32px;height:32px}
+.s-logo-pied .s-logo-img{height:32px}
+.s-logo-pied .s-logo-nom{font-size:20px}
+.s-nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px 28px}
+.s-nav a{display:block;font-size:17px;padding:6px 0;text-decoration:none;border-bottom:3px solid transparent}
+.s-nav a:hover{border-bottom-color:var(--line)}
+.s-nav a[aria-current="page"]{font-weight:700;border-bottom-color:var(--pri);padding-bottom:3px;margin-bottom:0}
+/* Sous-menus (ordinateur) : ils s'ouvrent au survol et au clavier */
+.s-nav-groupe{position:relative}
+.s-nav-groupe>a{display:flex!important;align-items:center;gap:2px}
+.s-nav-groupe>a .ic{transition:none}
+.s-nav-parent-actif{font-weight:700;border-bottom-color:var(--pri)!important}
+.s-nav .s-sous-menu{display:none;position:absolute;top:100%;left:-14px;min-width:220px;list-style:none;margin:0;padding:8px;background:var(--bg);border:1px solid var(--line);border-radius:min(var(--r),12px);box-shadow:0 10px 24px rgba(0,0,0,.14);z-index:20}
+.s-nav .s-nav-groupe:hover>.s-sous-menu,.s-nav .s-nav-groupe:focus-within>.s-sous-menu{display:block}
+.s-sous-menu a{display:block;padding:10px 12px;border-bottom:0!important;border-radius:6px;font-size:17px;white-space:nowrap}
+.s-sous-menu a:hover{background:var(--surf)}
+.s-sous-menu a[aria-current="page"]{font-weight:700;box-shadow:inset 4px 0 0 var(--pri)}
+.s-menu{display:none}
+.s-menu summary{list-style:none;cursor:pointer;display:flex;align-items:center;height:44px;padding:0 14px;border:2px solid var(--ink);border-radius:var(--rb);font-size:16px;font-weight:700;user-select:none}
+.s-menu summary::-webkit-details-marker{display:none}
+.s-menu summary>span{display:flex;align-items:center;gap:6px}
+.s-menu-fermer{display:none!important}
+.s-menu[open] summary{background:var(--ink);color:var(--bg)}
+.s-menu[open] .s-menu-ouvrir{display:none!important}
+.s-menu[open] .s-menu-fermer{display:flex!important}
+.s-menu-panneau{position:absolute;left:0;right:0;top:100%;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 20px 24px;min-height:70vh;box-shadow:0 12px 24px rgba(0,0,0,.12)}
+.s-menu-panneau ul{list-style:none;margin:0;padding:0}
+.s-menu-panneau a{display:flex;align-items:center;justify-content:space-between;min-height:64px;border-bottom:1px solid var(--line);font-family:var(--fh);font-weight:var(--hw);font-size:26px;text-transform:var(--ht);letter-spacing:var(--ls);text-decoration:none}
+.s-menu-panneau a .ic{color:var(--muted)}
+.s-menu-panneau ul ul a{padding-left:24px;font-size:21px;min-height:56px}
+.s-menu-actif{display:flex;align-items:center;gap:10px}
+.s-menu-barre{width:8px;height:28px;background:var(--pri);border-radius:4px}
+@container site (max-width: 759px){
+  .s-nav{display:none}
+  .s-menu{display:block}
+  .s-logo-nom{font-size:22px}
+}
+
+/* Contenu */
+.s-main{flex:1 0 auto;display:flex;flex-direction:column;gap:clamp(20px,2.6cqw,32px);padding:clamp(24px,3.4cqw,48px) clamp(20px,4cqw,56px) clamp(48px,6cqw,88px)}
+.s-b{min-width:0}
+.s-fond-douce{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3cqw,36px)}
+/* Sur la couleur principale, les variables sont inversées par le bloc : --onpri y vaut la couleur principale. */
+.s-fond-principale{background:var(--onpri);color:var(--ink);border-radius:var(--r);padding:clamp(20px,3cqw,36px)}
+.s-titre-grand{margin:0;font-size:clamp(34px,4.4cqw,56px);line-height:1.05;text-wrap:balance}
+.s-titre{margin:0;font-size:clamp(28px,3.4cqw,42px);line-height:1.1;text-wrap:balance}
+.s-para{margin:0;font-size:18px;line-height:1.65;max-width:68ch;white-space:pre-line;text-wrap:pretty}
+.s-liste{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:18px;line-height:1.5}
+.s-liste li{display:flex;gap:12px;align-items:baseline}
+.s-liste li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--pri);flex:0 0 auto;transform:translateY(-2px)}
+.s-bouton-ligne{margin:0}
+.s-btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 22px;background:var(--pri);color:var(--onpri)!important;border-radius:var(--rb);font-weight:700;font-size:17px;line-height:1.2;text-decoration:none}
+.s-btn:hover{filter:brightness(1.08)}
+
+/* Images */
+.s-ph{position:relative;border-radius:var(--img);background:repeating-linear-gradient(135deg,var(--surf) 0 14px,var(--line) 14px 28px);display:grid;place-items:center;overflow:hidden}
+.s-ph-texte{font:15px/1.3 ui-monospace,Consolas,monospace;color:var(--muted);background:var(--bg);padding:4px 8px;border-radius:4px;max-width:90%;text-align:center}
+.s-img-boite{position:relative;border-radius:var(--img);overflow:hidden;background:var(--surf)}
+.s-img-boite img{display:block;width:100%;height:100%;object-fit:cover}
+.s-figure{margin:0;display:flex;flex-direction:column;gap:10px;max-width:820px}
+.s-figure-img.s-ph{height:clamp(200px,32cqw,420px)}
+.s-figure-img.s-img-boite{max-height:560px}
+.s-figure-img.s-img-boite img{height:auto;max-height:560px}
+.s-figure figcaption{font-size:16px;color:var(--muted);font-style:italic}
+.s-galerie{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:16px}
+.s-galerie-img{aspect-ratio:4/3}
+
+/* Fiches produits */
+.s-produits{display:flex;flex-direction:column;gap:14px}
+.s-produits-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:24px}
+.s-produit{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;color:var(--ink)}
+.s-produit-img{aspect-ratio:4/3;border-radius:0}
+.s-produit .s-ph{background:repeating-linear-gradient(135deg,var(--bg) 0 14px,var(--line) 14px 28px)}
+.s-produit-corps{padding:18px 20px 22px;display:flex;flex-direction:column;gap:8px;flex:1}
+.s-produit-nom{margin:0;font-size:23px;line-height:1.15}
+.s-produit-desc{margin:0;font-size:17px;line-height:1.5;color:var(--muted);flex:1}
+.s-produit-prix{align-self:flex-start;margin-top:6px;padding:6px 12px;background:var(--pri);color:var(--onpri);border-radius:var(--rb);font-size:18px;font-weight:700}
+.s-produits-mention{margin:0;font-size:16px;color:var(--muted)}
+
+/* Lignes de plusieurs blocs (côte à côte sur ordinateur, l'un sous l'autre sur téléphone) */
+.s-ligne{display:grid;gap:clamp(20px,3cqw,40px);align-items:start}
+.s-ligne-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.s-ligne-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.s-ligne-2g{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.s-ligne-2d{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+.s-colonne{min-width:0;display:flex;flex-direction:column;gap:clamp(20px,2.6cqw,32px)}
+@container site (max-width: 759px){.s-ligne{grid-template-columns:minmax(0,1fr)}}
+
+/* Cartes */
+.s-cartes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:20px}
+.s-carte{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;overflow:hidden;color:var(--ink)}
+.s-cartes-icone .s-carte{padding:24px;gap:12px}
+.s-carte-icone{width:48px;height:48px;border-radius:var(--rb);background:var(--pri);color:var(--onpri);display:grid;place-items:center}
+.s-carte-img{aspect-ratio:4/3;border-radius:0}
+.s-carte .s-ph{background:repeating-linear-gradient(135deg,var(--bg) 0 14px,var(--line) 14px 28px)}
+.s-carte-corps{display:flex;flex-direction:column;gap:8px;align-items:flex-start;flex:1}
+.s-cartes-image .s-carte-corps{padding:18px 20px 22px}
+.s-carte-titre{margin:0;font-size:23px;line-height:1.15}
+.s-carte-texte{margin:0;font-size:17px;line-height:1.5;color:var(--muted);white-space:pre-line}
+.s-carte-lien{display:flex;align-items:center;gap:4px;font-size:17px;font-weight:700;text-decoration:underline;text-underline-offset:4px;margin-top:auto;padding-top:4px}
+
+/* Adresse et horaires */
+.s-infos{display:flex;flex-direction:column;gap:28px}
+.s-info{display:flex;flex-direction:column;gap:8px}
+.s-info-titre{margin:0;font-size:24px;display:flex;align-items:center;gap:8px}
+.s-info-titre .ic{color:var(--acc)}
+.s-info-texte{margin:0;font-size:18px;line-height:1.5;white-space:pre-line}
+.s-info-acces{margin:0;font-size:16px;color:var(--muted)}
+.s-horaires{margin:0;display:flex;flex-direction:column}
+.s-horaires>div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:17px}
+.s-horaires dd{margin:0;font-weight:700;text-align:right}
+
+/* Formulaire de contact (exemple, sans envoi) */
+.s-form{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3cqw,32px);display:flex;flex-direction:column;gap:16px;color:var(--ink)}
+.s-form-titre{margin:0;font-size:26px}
+.s-form label{display:flex;flex-direction:column;gap:6px;font-size:17px;font-weight:700}
+.s-form input,.s-form textarea{font:inherit;font-weight:400;font-size:17px;color:var(--ink);min-height:48px;padding:10px 12px;border:2px solid var(--muted);border-radius:min(var(--rb),14px);background:var(--bg);width:100%}
+.s-form textarea{resize:vertical}
+.s-form input:focus-visible,.s-form textarea:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+.s-form .s-btn{align-self:flex-start;border:0;cursor:pointer;font-family:inherit}
+.s-form-note{margin:0;font-size:16px;color:var(--muted);display:flex;gap:6px;align-items:flex-start}
+
+/* Citation */
+.s-citation{margin:0;padding:4px 0 4px clamp(20px,3cqw,32px);border-left:4px solid var(--pri);display:flex;flex-direction:column;gap:10px;max-width:760px}
+.s-citation-icone{color:var(--acc)}
+.s-citation blockquote{margin:0;font-size:clamp(24px,3cqw,32px);line-height:1.25;text-wrap:balance}
+.s-citation figcaption{font-size:17px;color:var(--muted)}
+.s-citation figcaption::before{content:"\2014\00A0"}
+
+/* Séparateur */
+.s-separateur{border:0;border-top:2px solid var(--line);margin:clamp(8px,1.5cqw,20px) 0;width:100%}
+.s-espace{height:clamp(16px,3cqw,48px)}
+
+/* Bandeau d'accueil */
+.s-bandeau{display:flex;flex-direction:column}
+.s-bandeau-img{height:clamp(230px,40cqw,500px)}
+.s-bandeau-carte{position:relative;max-width:660px;margin:clamp(-110px,-8cqw,-36px) clamp(12px,4cqw,56px) 0;background:var(--bg);color:var(--ink);border-radius:var(--r);padding:clamp(20px,3cqw,36px);box-shadow:0 6px 24px rgba(0,0,0,.12);display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.s-fond-principale .s-bandeau-carte{background:var(--onpri)}
+.s-bandeau-titre{margin:0;font-size:clamp(32px,4.6cqw,58px);line-height:1.05;text-wrap:balance}
+.s-bandeau-sous{margin:0;font-size:18px;line-height:1.55;color:var(--muted)}
+
+/* Pied de page */
+.s-pied{background:var(--surf);border-top:1px solid var(--line);padding:32px clamp(20px,4cqw,56px);display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:space-between;align-items:flex-start}
+.s-pied-info{display:flex;flex-direction:column;gap:8px}
+.s-pied-mention{font-size:16px;color:var(--muted)}
+.s-pied-nav{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:16px}
+.s-pied-nav a{text-underline-offset:3px}

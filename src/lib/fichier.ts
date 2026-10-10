@@ -1,0 +1,120 @@
+// Enregistrement et ouverture du fichier .vitrine (JSON, images en data URL). Aucun serveur.
+// Sur Chrome et Edge, l'élève choisit le dossier (fenêtre « Enregistrer sous ») ; le navigateur
+// retient ce dossier, et les enregistrements suivants mettent à jour le même fichier.
+// Ailleurs (Firefox), le fichier part dans Téléchargements.
+import { estProjet, normaliserProjet, type Projet } from '../model';
+
+// API d'accès aux fichiers (Chrome, Edge) : types minimaux, absents de la bibliothèque DOM standard.
+interface Poignee {
+  name: string;
+  getFile: () => Promise<File>;
+  createWritable: () => Promise<{ write: (d: Blob) => Promise<void>; close: () => Promise<void> }>;
+}
+type OptionsFichier = { id?: string; startIn?: string; suggestedName?: string; types?: { description: string; accept: Record<string, string[]> }[] };
+declare global {
+  interface Window {
+    showSaveFilePicker?: (o?: OptionsFichier) => Promise<Poignee>;
+    showOpenFilePicker?: (o?: OptionsFichier & { multiple?: boolean }) => Promise<Poignee[]>;
+  }
+}
+
+const TYPE_VITRINE = [{ description: 'Projet Vitrine', accept: { 'application/json': ['.vitrine'] } }];
+
+/** Le navigateur permet-il de choisir le dossier d'enregistrement ? */
+export const peutChoisirDossier = () => typeof window.showSaveFilePicker === 'function';
+
+/** Fichier du projet en cours (ouvert ou déjà enregistré pendant cette séance). */
+let poigneeProjet: Poignee | null = null;
+export const oublierFichierProjet = () => { poigneeProjet = null; };
+export const fichierProjetConnu = () => poigneeProjet?.name ?? null;
+
+const estAnnulation = (e: unknown) => e instanceof DOMException && e.name === 'AbortError';
+
+export function telecharger(nom: string, contenu: Blob) {
+  const url = URL.createObjectURL(contenu);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nom;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
+export type ResultatEnregistrement =
+  | { mode: 'dossier'; fichier: string; premiereFois: boolean }
+  | { mode: 'telechargement'; fichier: string }
+  | null; // l'élève a fermé la fenêtre sans enregistrer
+
+/**
+ * Enregistre le projet. `ailleurs` force la fenêtre « Enregistrer sous » même si le fichier est déjà connu.
+ */
+export async function enregistrerProjet(p: Projet, nom: string, ailleurs = false): Promise<ResultatEnregistrement> {
+  const q: Projet = { ...p, meta: { ...p.meta, enregistre_le: new Date().toISOString() } };
+  const contenu = new Blob([JSON.stringify(q)], { type: 'application/json' });
+  if (peutChoisirDossier()) {
+    let premiereFois = false;
+    try {
+      if (!poigneeProjet || ailleurs) {
+        poigneeProjet = await window.showSaveFilePicker!({ id: 'vitrine-projet', startIn: 'documents', suggestedName: nom, types: TYPE_VITRINE });
+        premiereFois = true;
+      }
+      const w = await poigneeProjet.createWritable();
+      await w.write(contenu);
+      await w.close();
+      return { mode: 'dossier', fichier: poigneeProjet.name, premiereFois };
+    } catch (e) {
+      if (estAnnulation(e)) return null;
+      // Droit refusé ou dossier introuvable : on retombe sur le téléchargement.
+      poigneeProjet = null;
+    }
+  }
+  telecharger(nom, contenu);
+  return { mode: 'telechargement', fichier: nom };
+}
+
+/** Ouvre la boîte « Choisir un fichier ». Renvoie null si l'élève annule. */
+export function choisirFichier(accept: string): Promise<File | null> {
+  return new Promise((ok) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = accept;
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    let fini = false;
+    input.addEventListener('change', () => { fini = true; ok(input.files?.[0] ?? null); input.remove(); });
+    input.addEventListener('cancel', () => { if (!fini) ok(null); input.remove(); });
+    input.click();
+  });
+}
+
+/**
+ * Choisit un fichier .vitrine. Avec Chrome et Edge, le navigateur rouvre le dernier dossier utilisé,
+ * et `garder` permet ensuite d'enregistrer directement dans ce fichier.
+ */
+export async function choisirFichierProjet(garder: boolean, id = 'vitrine-projet'): Promise<File | null> {
+  if (typeof window.showOpenFilePicker === 'function') {
+    try {
+      const [h] = await window.showOpenFilePicker({ id, startIn: 'documents', types: TYPE_VITRINE });
+      const f = await h.getFile();
+      if (garder) poigneeProjet = /\.vitrine$/i.test(f.name) ? h : null;
+      return f;
+    } catch (e) {
+      if (estAnnulation(e)) return null;
+    }
+  }
+  if (garder) poigneeProjet = null;
+  return choisirFichier('.vitrine');
+}
+
+export type Lecture = { ok: true; projet: Projet } | { ok: false; nom: string };
+
+export async function lireProjet(f: File): Promise<Lecture> {
+  if (!/\.vitrine$/i.test(f.name)) return { ok: false, nom: f.name };
+  try {
+    const x = JSON.parse(await f.text());
+    return estProjet(x) ? { ok: true, projet: normaliserProjet(x) } : { ok: false, nom: f.name };
+  } catch {
+    return { ok: false, nom: f.name };
+  }
+}
