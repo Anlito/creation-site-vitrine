@@ -158,10 +158,11 @@ export const SLOGAN_PAR_DEFAUT = 'Ton slogan ici';
 export const LIMITE_IMAGE = 1024 * 1024; // 1 Mo
 
 /**
- * Dossier où les élèves rangent leur projet sur le réseau du collège (affiché comme conseil).
+ * Dossier où l'équipe range son projet sur le réseau du collège (affiché comme conseil) : le même dossier
+ * d'équipe que la modélisation Concept Store 3D, pour que l'outil professeur associe le site et la 3D.
  * « 4e B » devient « 4B » ; sans classe renseignée, on affiche « 4X ».
  */
 export const dossierConseille = (classe?: string) => {
   const c = classe?.trim() ? classe.replace(/\s+/g, '').replace(/^(\d)e/i, '$1').toUpperCase() : '4X';
-  return `${c} › Commun › TECHNOLOGIE › CONCEPT STORE › ton prénom`;
+  return `${c} › Commun › TECHNOLOGIE › CONCEPT STORE › Prénom-Prénom (ton équipe)`;
 };

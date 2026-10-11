@@ -39,12 +39,15 @@ async function favicon(p: Projet): Promise<Uint8Array> {
   return new Uint8Array(await (blob ?? new Blob()).arrayBuffer());
 }
 
-export async function exporterSite(p: Projet): Promise<string> {
-  const dossier = slug(p.nom);
+/**
+ * Fichiers du site statique (chemins relatifs : index.html, style.css, images/…, polices/…).
+ * Sert à l'export, et à l'outil professeur de Concept Store qui affiche le site d'une équipe.
+ */
+export async function fabriquerSite(p: Projet): Promise<Record<string, Uint8Array>> {
   const fichiers: Record<string, Uint8Array> = {};
   const pages = fichiersPages(p);
   const ajouter = (chemin: string, contenu: Uint8Array | string) => {
-    fichiers[`${dossier}/${chemin}`] = typeof contenu === 'string' ? strToU8(contenu) : contenu;
+    fichiers[chemin] = typeof contenu === 'string' ? strToU8(contenu) : contenu;
   };
 
   // Images : une seule copie par image, nommées dans l'ordre d'apparition.
@@ -116,6 +119,13 @@ ${corps}
   }
   ajouter('LISEZ-MOI.txt', `Site de ${p.nom}, créé avec Vitrine.\r\n\r\nPour voir le site : ouvre le fichier index.html (double-clic).\r\nPour le mettre en ligne : envoie tout le contenu de ce dossier, sans rien renommer.\r\n`);
 
+  return fichiers;
+}
+
+export async function exporterSite(p: Projet): Promise<string> {
+  const dossier = slug(p.nom);
+  const fichiers: Record<string, Uint8Array> = {};
+  for (const [chemin, octets] of Object.entries(await fabriquerSite(p))) fichiers[`${dossier}/${chemin}`] = octets;
   const zip = zipSync(fichiers, { level: 6 });
   const nom = `${dossier}-site.zip`;
   telecharger(nom, new Blob([zip as BlobPart], { type: 'application/zip' }));
