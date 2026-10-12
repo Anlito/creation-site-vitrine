@@ -21,10 +21,10 @@ Ce que l'élève récupère :
 
   Le site s'ouvre sans connexion.
 - **Espace enseignant** (lien en bas à droite de l'accueil, **protégé par un mot de passe**) :
-  - il ouvre les fichiers `.vitrine` en lecture seule ;
-  - il affiche les 8 contrôles automatiques et la grille sur 20 ;
-  - il garde les évaluations dans le navigateur ;
-  - il exporte toute la classe en CSV (séparateur `;`, UTF-8 avec BOM, pour Excel FR).
+  - **tableau de bord** : les projets déjà évalués (classe, équipe, note, contrôles réussis, date), filtre par classe, moyenne, suppression d'une évaluation ;
+  - **évaluation d'un projet** : aperçu du site en lecture seule (ordinateur ou téléphone, liste des pages), grille sur 20, contrôle automatique (9 points, problèmes expliqués), commentaire, puis « Équipe suivante » ;
+  - les évaluations sont gardées dans le navigateur, et retrouvées si l'on rouvre le fichier d'une équipe ;
+  - export CSV de la classe affichée (séparateur `;`, UTF-8 avec BOM, pour Excel FR).
 
 ## Livrable pour les classes
 
