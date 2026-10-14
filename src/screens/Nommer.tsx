@@ -2,12 +2,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Barre, BandeauMessage, ONGLETS, useEnregistrer } from '../components/Barre';
 import { Icon } from '../components/Icon';
-import { useApp, useProjet } from '../etat';
-import { oublierFichierProjet } from '../lib/fichier';
+import { dossierConseille } from '../data/constantes';
+import { nomFichier, useApp, useProjet } from '../etat';
+import { enregistrerProjet, oublierFichierProjet, peutChoisirDossier } from '../lib/fichier';
 import { nouveauProjet, type Projet } from '../model';
 
 export function Nommer() {
-  const { allerA, allerEtape, ouvrirProjet, setUi } = useApp();
+  const { allerA, allerEtape, ouvrirProjet, setUi, setMessage, marquerEnregistre } = useApp();
   const [nom, setNom] = useState('');
   const [classe, setClasse] = useState('');
   const [equipe, setEquipe] = useState('');
@@ -25,9 +26,18 @@ export function Nommer() {
     oublierFichierProjet();
     const p = nouveauProjet(n);
     p.meta = { classe: classe.trim(), equipe: equipe.trim() };
+    // Le clic sur « Créer mon projet » ouvre tout de suite la fenêtre « Enregistrer sous » :
+    // le projet est rangé dans le dossier de l'équipe dès le départ, puis s'y enregistre tout seul.
+    // (L'appel doit partir directement du clic, sinon le navigateur refuse d'ouvrir la fenêtre.)
+    const enregistrement = peutChoisirDossier() ? enregistrerProjet(p, nomFichier(p)) : null;
     ouvrirProjet(p);
     setUi({ nouveauProjet: true });
     allerEtape(1);
+    enregistrement?.then((r) => {
+      if (!r) { setMessage({ type: 'non-enregistre', fichier: '' }); return; }
+      marquerEnregistre();
+      setMessage({ type: 'enregistre', fichier: r.fichier, dossier: r.mode === 'dossier', premiereFois: true });
+    });
   };
 
   return (
@@ -51,6 +61,16 @@ export function Nommer() {
             : <span id="aide-nom" className="o-aide o-aide-17">Exemple : «&nbsp;Le Grenier Malin&nbsp;». Tu pourras le changer plus tard.</span>}
         </label>
         <ChampsEquipe classe={classe} equipe={equipe} setClasse={setClasse} setEquipe={setEquipe} verifier={essai} />
+        {peutChoisirDossier() && (
+          <div className="o-msg o-msg-info o-nommer-dossier">
+            <Icon n="folder_open" />
+            <span>
+              Quand tu cliques sur «&nbsp;Créer mon projet&nbsp;», choisis le <strong>dossier de ton équipe</strong>&nbsp;:<br />
+              <strong className="o-c-texte">{dossierConseille(classe)}</strong>.<br />
+              Ensuite, ton projet s'y enregistre tout seul.
+            </span>
+          </div>
+        )}
         <button type="submit" className="o-btn o-btn-principal o-btn-gros o-btn-20">Créer mon projet<Icon n="arrow_forward" size={24} /></button>
       </form>
     </div>

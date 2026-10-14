@@ -1,7 +1,7 @@
 // Barre du haut : des onglets, sans ordre imposé (Charte, Pages et Contenu se font dans l'ordre que l'on veut).
 import { nomFichier, useProjet, type Etape } from '../etat';
 import { dossierConseille } from '../data/constantes';
-import { enregistrerProjet, peutChoisirDossier } from '../lib/fichier';
+import { enregistrerProjet, fichierProjetConnu, peutChoisirDossier } from '../lib/fichier';
 import { InvitationVisite, PanneauAide, VisiteGuidee } from './Aide';
 import { ApercuPlein } from './ApercuPlein';
 import { Icon } from './Icon';
@@ -26,7 +26,19 @@ export function useEnregistrer() {
 }
 
 export function Barre() {
-  const { projet, etape, allerEtape, ui, setUi } = useProjet();
+  const { projet, etape, allerEtape, ui, setUi, modifie, sauvegarde } = useProjet();
+  const fichier = fichierProjetConnu();
+  const enregistre = !modifie && sauvegarde.etat === 'ok';
+  // Info-bulle : où en est l'enregistrement automatique.
+  const etatEnregistrement = enregistre
+    ? `Enregistré automatiquement à ${sauvegarde.heure} dans « ${fichier} »`
+    : sauvegarde.etat === 'autorisation'
+      ? 'Clique une fois sur « Enregistrer » : ensuite, ton projet s’enregistrera tout seul.'
+      : !fichier && peutChoisirDossier()
+        ? `Choisis le dossier de ton équipe : ${dossierConseille(projet.meta.classe)}. Ensuite, ton projet s’enregistrera tout seul.`
+        : fichier && sauvegarde.etat !== 'erreur'
+          ? 'Tes modifications vont s’enregistrer automatiquement dans quelques secondes.'
+          : 'Enregistrer ton projet';
   const enregistrer = useEnregistrer();
   return (
     <>
@@ -52,7 +64,16 @@ export function Barre() {
       <div className="o-barre-actions">
         <button className="o-btn o-btn-discret" data-aide="aide" onClick={() => setUi({ aideOuverte: true })} title="Questions fréquentes et visite guidée"><Icon n="info" />Aide</button>
         <button className="o-btn o-btn-secondaire" data-aide="apercu" onClick={() => setUi({ apercu: true })} title="Voir ton site en plein écran"><Icon n="visibility" />Aperçu</button>
-        <button className="o-btn o-btn-secondaire" data-aide="enregistrer" onClick={() => enregistrer()} title={peutChoisirDossier() ? `Range ton projet dans : ${dossierConseille(projet.meta.classe)}` : undefined}><Icon n="save" />Enregistrer</button>
+        <button
+          className={`o-btn o-btn-secondaire o-btn-enregistrer${enregistre ? ' enregistre' : modifie ? ' a-faire' : ''}`}
+          data-aide="enregistrer"
+          onClick={() => enregistrer()}
+          title={etatEnregistrement}
+        >
+          <Icon n={enregistre ? 'check_circle' : 'save'} />{enregistre ? 'Enregistré' : 'Enregistrer'}
+          {!enregistre && modifie && <span className="o-point-alerte" aria-hidden="true" />}
+          <span className="o-masque">. {etatEnregistrement}</span>
+        </button>
       </div>
     </header>
     {ui.apercu && <ApercuPlein />}
@@ -68,17 +89,24 @@ export function BandeauMessage() {
   const { message, setMessage, projet } = useProjet();
   if (!message) return null;
   return (
-    <div role="status" className="o-bandeau-succes">
-      <Icon n="task_alt" size={28} className="o-c-succes" />
+    <div role="status" className={`o-bandeau-succes${message.type === 'non-enregistre' ? ' alerte' : ''}`}>
+      {message.type === 'non-enregistre'
+        ? <Icon n="warning" size={28} className="o-c-alerte" />
+        : <Icon n="task_alt" size={28} className="o-c-succes" />}
       <div className="o-bandeau-texte">
-        {message.type === 'enregistre' ? (
+        {message.type === 'non-enregistre' ? (
+          <>
+            <strong>Ton projet n'est pas encore enregistré.</strong>
+            <span>Clique sur «&nbsp;Enregistrer&nbsp;» et choisis le dossier de ton équipe : <strong>{dossierConseille(projet.meta.classe)}</strong>. Ensuite, ton projet s'enregistrera tout seul.</span>
+          </>
+        ) : message.type === 'enregistre' ? (
           <>
             <strong>Projet enregistré !</strong>
             {message.dossier && !message.premiereFois && (
               <span>Tes changements sont enregistrés dans «&nbsp;{message.fichier}&nbsp;».</span>
             )}
             {message.dossier && message.premiereFois && (
-              <span>Le fichier «&nbsp;{message.fichier}&nbsp;» est dans le dossier que tu as choisi. Les prochaines fois, «&nbsp;Enregistrer&nbsp;» le mettra à jour directement. À la prochaine séance, ouvre-le avec «&nbsp;Ouvrir mon projet&nbsp;».</span>
+              <span>Le fichier «&nbsp;{message.fichier}&nbsp;» est dans le dossier que tu as choisi. Désormais, <strong>ton projet s'enregistre tout seul</strong> à chaque modification. À la prochaine séance, ouvre-le avec «&nbsp;Ouvrir mon projet&nbsp;».</span>
             )}
             {!message.dossier && (
               <span>Le fichier «&nbsp;{message.fichier}&nbsp;» est dans ton dossier Téléchargements. Range-le dans ton dossier : <strong>{dossierConseille(projet.meta.classe)}</strong>. À la prochaine séance, ouvre-le avec «&nbsp;Ouvrir mon projet&nbsp;».</span>

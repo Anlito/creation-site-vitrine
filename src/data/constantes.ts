@@ -164,5 +164,5 @@ export const LIMITE_IMAGE = 1024 * 1024; // 1 Mo
  */
 export const dossierConseille = (classe?: string) => {
   const c = classe?.trim() ? classe.replace(/\s+/g, '').replace(/^(\d)e/i, '$1').toUpperCase() : '4X';
-  return `${c} › Commun › TECHNOLOGIE › CONCEPT STORE › Prénom-Prénom (ton équipe)`;
+  return `${c} › COMMUN › TECHNOLOGIE › CONCEPT STORE › Prénom_Prénom (ton équipe)`;
 };

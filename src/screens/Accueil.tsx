@@ -1,12 +1,27 @@
 // Écran 1 : deux gros boutons, rien d'autre. L'accès enseignant reste discret en bas.
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon } from '../components/Icon';
 import { useApp } from '../etat';
 import { choisirFichierProjet, lireProjet, oublierFichierProjet } from '../lib/fichier';
+import { effacerSecours, lireSecours, type Secours } from '../lib/secours';
+import { estProjet, normaliserProjet } from '../model';
 
 export function Accueil() {
-  const { allerA, allerEtape, ouvrirProjet } = useApp();
+  const { allerA, allerEtape, ouvrirProjet, setMessage } = useApp();
   const [erreur, setErreur] = useState<string | null>(null);
+  // Travail qui n'a pas pu être enregistré dans un fichier (copie de secours du navigateur).
+  const [secours, setSecours] = useState<Secours | null>(null);
+  const [ignorer, setIgnorer] = useState(false);
+  useEffect(() => { lireSecours().then((s) => setSecours(s && estProjet(s.projet) ? s : null)); }, []);
+
+  const reprendre = () => {
+    if (!secours) return;
+    oublierFichierProjet();
+    ouvrirProjet(normaliserProjet(secours.projet));
+    allerEtape(4);
+    setMessage({ type: 'non-enregistre', fichier: '' });
+  };
+  const quandSecours = secours && new Date(secours.date).toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 
   const ouvrir = async () => {
     const f = await choisirFichierProjet(true);
@@ -36,6 +51,31 @@ export function Accueil() {
           <span className="o-gros-choix-sous">Le fichier enregistré la dernière fois</span>
         </button>
       </div>
+      {secours && !erreur && (
+        <div className="o-msg o-msg-alerte o-msg-large" role="status">
+          <Icon n="warning" size={30} />
+          <div className="o-msg-corps">
+            <strong>Un travail non enregistré a été retrouvé sur cet ordinateur.</strong>
+            <span>
+              «&nbsp;{secours.projet.nom}&nbsp;»
+              {secours.projet.meta.classe ? ` · ${secours.projet.meta.classe}` : ''}
+              {secours.projet.meta.equipe ? ` · ${secours.projet.meta.equipe}` : ''} — modifié le {quandSecours}.
+            </span>
+            {ignorer ? (
+              <div className="o-ligne-boutons">
+                <span>Ce travail sera perdu. Tu es sûr ?</span>
+                <button className="o-btn o-btn-danger" onClick={() => { effacerSecours(); setSecours(null); }}>Oui, l'effacer</button>
+                <button className="o-btn o-btn-discret" onClick={() => setIgnorer(false)}>Non</button>
+              </div>
+            ) : (
+              <div className="o-ligne-boutons">
+                <button className="o-btn o-btn-contour-alerte" onClick={reprendre}><Icon n="undo" />Reprendre ce travail</button>
+                <button className="o-btn o-btn-discret" onClick={() => setIgnorer(true)}>Ce n'est pas mon projet</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {erreur && (
         <div role="alert" className="o-msg o-msg-erreur o-msg-large">
           <Icon n="error" size={30} />

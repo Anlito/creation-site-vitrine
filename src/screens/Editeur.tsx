@@ -573,8 +573,8 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
           <div className="o-champ-groupe" role="group" aria-labelledby={`cols-${b.id}`}>
             <span id={`cols-${b.id}`} className="o-libelle">Contenu des colonnes</span>
             {colonnesVisibles(b).map((col, k) => (
-              <fieldset key={k} className="o-fiche">
-                <legend className="o-fiche-titre"><span>Colonne {k + 1}</span><span className="o-c-2 o-normal">{col.length} bloc{col.length > 1 ? 's' : ''}</span></legend>
+              <div key={k} className="o-fiche" role="group" aria-label={`Colonne ${k + 1}`}>
+                <div className="o-fiche-titre"><span>Colonne {k + 1}</span><span className="o-c-2 o-normal">{col.length} bloc{col.length > 1 ? 's' : ''}</span></div>
                 {col.map((x) => (
                   <div key={x.id} className="o-ligne-colonne">
                     <span className="o-flex1"><Icon n={typeBloc(x.type).icon} size={20} className="o-ic-ligne" /> {typeBloc(x.type).label}</span>
@@ -585,7 +585,7 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
                   <option value="">+ Ajouter un bloc…</option>
                   {TYPES_EN_COLONNE.map((tc) => <option key={tc} value={tc}>{typeBloc(tc).label}</option>)}
                 </select>
-              </fieldset>
+              </div>
             ))}
             <span className="o-aide">Mets autant de blocs que tu veux dans chaque colonne. Tu peux aussi les glisser depuis la liste de gauche. Sur téléphone, les colonnes passent l'une sous l'autre.</span>
           </div>
@@ -665,8 +665,8 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
             const majP = (champs: Partial<typeof x>, cle?: string) =>
               set({ produits: b.produits.map((y, k) => (k === j ? { ...y, ...champs } : y)) }, cle && `p${j}-${cle}`);
             return (
-              <fieldset key={x.id} className="o-fiche">
-                <legend className="o-fiche-titre">
+              <div key={x.id} className="o-fiche" role="group" aria-label={`Produit ${j + 1}`}>
+                <div className="o-fiche-titre">
                   <span>Produit {j + 1}</span>
                   <span className="o-ligne-boutons o-gap6">
                     <button className="o-btn-icone" aria-label={`Monter le produit ${j + 1}`} title="Monter" disabled={j === 0}
@@ -674,7 +674,7 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
                     <button className="o-btn-icone o-btn-icone-danger" aria-label={`Retirer le produit ${j + 1}`} title="Retirer ce produit" disabled={b.produits.length <= 1}
                       onClick={() => set({ produits: b.produits.filter((_, k) => k !== j) })}><Icon n="delete" size={20} /></button>
                   </span>
-                </legend>
+                </div>
                 <Champ label="Nom du produit" valeur={x.nom} onChange={(nom) => majP({ nom }, 'nom')} />
                 <Champ label="Description" valeur={x.desc} lignes={2} aide="Une phrase courte suffit." onChange={(desc) => majP({ desc }, 'desc')} />
                 <Champ label="Prix" valeur={x.prix} aide="Exemple : « 12 € ». Les prix sont fictifs." onChange={(prix) => majP({ prix }, 'prix')} />
@@ -692,12 +692,12 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
                       className="o-btn o-btn-pointille"
                       onClick={() => majP({ declinaisons: [nouvelleDeclinaison(1, x.image), nouvelleDeclinaison(2)] })}
                     >
-                      + Ajouter des déclinaisons (couleurs, modèles…)
+                      + Ajouter des déclinaisons
                     </button>
-                    <span className="o-aide">Par exemple le même tee-shirt en rouge, bleu et vert, chacun avec sa photo.</span>
+                    <span className="o-aide">Couleurs, modèles… Par exemple le même tee-shirt en rouge, bleu et vert, chacun avec sa photo.</span>
                   </>
                 )}
-              </fieldset>
+              </div>
             );
           })}
           <button className="o-btn o-btn-pointille" onClick={() => set({ produits: [...b.produits, nouveauProduit(b.produits.length + 1)] })}>+ Ajouter un produit</button>
@@ -738,8 +738,8 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
             const majC = (champs: Partial<typeof k>, cle?: string) =>
               set({ cartes: b.cartes.map((y, n) => (n === j ? { ...y, ...champs } : y)) }, cle && `c${j}-${cle}`);
             return (
-              <fieldset key={k.id} className="o-fiche">
-                <legend className="o-fiche-titre">
+              <div key={k.id} className="o-fiche" role="group" aria-label={`Carte ${j + 1}`}>
+                <div className="o-fiche-titre">
                   <span>Carte {j + 1}</span>
                   <span className="o-ligne-boutons o-gap6">
                     <button className="o-btn-icone" aria-label={`Monter la carte ${j + 1}`} title="Monter" disabled={j === 0}
@@ -747,7 +747,7 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
                     <button className="o-btn-icone o-btn-icone-danger" aria-label={`Retirer la carte ${j + 1}`} title="Retirer cette carte" disabled={b.cartes.length <= 1}
                       onClick={() => set({ cartes: b.cartes.filter((_, n) => n !== j) })}><Icon n="delete" size={20} /></button>
                   </span>
-                </legend>
+                </div>
                 {b.style === 'icone' ? (
                   <label className="o-champ-groupe">
                     <span className="o-libelle">Icône</span>
@@ -764,7 +764,7 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
                 <Champ label="Titre" valeur={k.titre} onChange={(titre) => majC({ titre }, 'titre')} />
                 <Champ label="Texte" valeur={k.texte} lignes={2} onChange={(texte) => majC({ texte }, 'texte')} />
                 <ChoixPage valeur={k.cible} pages={pages} facultatif onChange={(cible) => majC({ cible: cible || null })} />
-              </fieldset>
+              </div>
             );
           })}
           {b.cartes.length < 6 && (

@@ -1,12 +1,15 @@
 // État de l'application : projet en cours, historique d'annulation, écran et réglages d'interface.
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { enregistrerAuto } from './lib/fichier';
+import { ecrireSecours, effacerSecours } from './lib/secours';
 import { slug, type Projet } from './model';
 
 export type Etape = 1 | 2 | 3 | 4 | 5;
 export type Ecran = 'accueil' | 'nommer' | 'projet' | 'enseignant';
 
 export interface Message {
-  type: 'enregistre' | 'exporte';
+  /** « non-enregistre » : l'élève a fermé la fenêtre « Enregistrer sous » à la création du projet. */
+  type: 'enregistre' | 'exporte' | 'non-enregistre';
   /** Enregistré dans un dossier choisi (sinon dans Téléchargements). */
   dossier?: boolean;
   premiereFois?: boolean;
@@ -40,6 +43,14 @@ const UI_INITIALE: Ui = { pageId: 'accueil', sel: null, appareil: 'ordinateur', 
   visite: null, aideOuverte: false, visitesProposees: [], nouveauProjet: false,
 };
 
+/**
+ * Enregistrement automatique : « ok » = enregistré dans le fichier du projet ; « secours » = pas de fichier,
+ * copie gardée dans le navigateur ; « autorisation » = le navigateur attend un clic sur « Enregistrer ».
+ */
+export interface EtatSauvegarde { etat: 'aucune' | 'ok' | 'secours' | 'autorisation' | 'erreur'; heure?: string }
+
+const heureLisible = () => new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
 interface App {
   ecran: Ecran;
   etape: Etape;
@@ -48,6 +59,7 @@ interface App {
   message: Message | null;
   peutAnnuler: boolean;
   modifie: boolean;
+  sauvegarde: EtatSauvegarde;
   allerA: (e: Ecran) => void;
   allerEtape: (e: Etape) => void;
   ouvrirProjet: (p: Projet) => void;
@@ -88,6 +100,26 @@ export function FournisseurApp({ children }: { children: React.ReactNode }) {
   const [message, setMessage] = useState<Message | null>(null);
   const [modifie, setModifie] = useState(false);
   const dernier = useRef<{ cle: string; t: number } | null>(null);
+  const [sauvegarde, setSauvegarde] = useState<EtatSauvegarde>({ etat: 'aucune' });
+
+  // Enregistrement automatique, 2,5 s après la dernière modification : dans le fichier du projet
+  // si c'est possible, sinon une copie de secours dans le navigateur.
+  useEffect(() => {
+    if (!projet || !modifie) return;
+    const p = projet;
+    const t = setTimeout(async () => {
+      const r = await enregistrerAuto(p);
+      if (r === 'ok') {
+        effacerSecours();
+        if (histRef.current.projet === p) setModifie(false); // rien n'a changé pendant l'écriture
+        setSauvegarde({ etat: 'ok', heure: heureLisible() });
+      } else {
+        await ecrireSecours(p);
+        setSauvegarde({ etat: r === 'autorisation' ? 'autorisation' : r === 'erreur' ? 'erreur' : 'secours', heure: heureLisible() });
+      }
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [projet, modifie]);
 
   // Prévenir la perte du travail si l'élève ferme l'onglet sans avoir enregistré.
   useEffect(() => {
@@ -130,13 +162,13 @@ export function FournisseurApp({ children }: { children: React.ReactNode }) {
   }, []);
 
   const app = useMemo<App>(() => ({
-    ecran, etape, projet, ui, message, modifie,
+    ecran, etape, projet, ui, message, modifie, sauvegarde,
     peutAnnuler: hist.passe.length > 0,
     allerA: (e) => { setEcran(e); setMessage(null); },
     allerEtape: (e) => {
       setEtape(e);
       setEcran('projet');
-      setMessage((m) => (m?.type === 'enregistre' ? m : null));
+      setMessage((m) => (m?.type === 'enregistre' || m?.type === 'non-enregistre' ? m : null));
       window.scrollTo(0, 0);
     },
     ouvrirProjet: (p) => {
@@ -145,11 +177,12 @@ export function FournisseurApp({ children }: { children: React.ReactNode }) {
       setUiState({ ...UI_INITIALE, pageId: p.pages.find((pg) => pg.active)?.id ?? 'accueil' });
       setModifie(false);
       setMessage(null);
+      setSauvegarde({ etat: 'aucune' });
     },
     maj, annuler, setUi, setMessage,
-    marquerEnregistre: () => setModifie(false),
+    marquerEnregistre: () => { setModifie(false); setSauvegarde({ etat: 'ok', heure: heureLisible() }); effacerSecours(); },
     fermerProjet: () => { setHist({ projet: null, passe: [] }); setModifie(false); setMessage(null); },
-  }), [ecran, etape, projet, ui, message, modifie, hist.passe.length, maj, annuler, setUi]);
+  }), [ecran, etape, projet, ui, message, modifie, sauvegarde, hist.passe.length, maj, annuler, setUi]);
 
   return <Ctx.Provider value={app}>{children}</Ctx.Provider>;
 }

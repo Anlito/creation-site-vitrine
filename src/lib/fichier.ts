@@ -2,6 +2,7 @@
 // Sur Chrome et Edge, l'élève choisit le dossier (fenêtre « Enregistrer sous ») ; le navigateur
 // retient ce dossier, et les enregistrements suivants mettent à jour le même fichier.
 // Ailleurs (Firefox), le fichier part dans Téléchargements.
+// Quand le fichier est connu, le projet y est aussi enregistré automatiquement (voir enregistrerAuto).
 import { estProjet, normaliserProjet, type Projet } from '../model';
 
 // API d'accès aux fichiers (Chrome, Edge) : types minimaux, absents de la bibliothèque DOM standard.
@@ -9,6 +10,8 @@ interface Poignee {
   name: string;
   getFile: () => Promise<File>;
   createWritable: () => Promise<{ write: (d: Blob) => Promise<void>; close: () => Promise<void> }>;
+  queryPermission?: (o: { mode: 'readwrite' }) => Promise<PermissionState>;
+  requestPermission?: (o: { mode: 'readwrite' }) => Promise<PermissionState>;
 }
 type OptionsFichier = { id?: string; startIn?: string; suggestedName?: string; types?: { description: string; accept: Record<string, string[]> }[] };
 declare global {
@@ -49,9 +52,17 @@ export type ResultatEnregistrement =
 /**
  * Enregistre le projet. `ailleurs` force la fenêtre « Enregistrer sous » même si le fichier est déjà connu.
  */
+const contenuFichier = (p: Projet) =>
+  new Blob([JSON.stringify({ ...p, meta: { ...p.meta, enregistre_le: new Date().toISOString() } })], { type: 'application/json' });
+
+async function ecrire(h: Poignee, contenu: Blob) {
+  const w = await h.createWritable();
+  await w.write(contenu);
+  await w.close();
+}
+
 export async function enregistrerProjet(p: Projet, nom: string, ailleurs = false): Promise<ResultatEnregistrement> {
-  const q: Projet = { ...p, meta: { ...p.meta, enregistre_le: new Date().toISOString() } };
-  const contenu = new Blob([JSON.stringify(q)], { type: 'application/json' });
+  const contenu = contenuFichier(p);
   if (peutChoisirDossier()) {
     let premiereFois = false;
     try {
@@ -59,9 +70,9 @@ export async function enregistrerProjet(p: Projet, nom: string, ailleurs = false
         poigneeProjet = await window.showSaveFilePicker!({ id: 'vitrine-projet', startIn: 'documents', suggestedName: nom, types: TYPE_VITRINE });
         premiereFois = true;
       }
-      const w = await poigneeProjet.createWritable();
-      await w.write(contenu);
-      await w.close();
+      // Fichier ouvert avec « Ouvrir mon projet » : le navigateur demande l'autorisation d'y écrire (une fois).
+      if (!premiereFois && poigneeProjet.requestPermission) await poigneeProjet.requestPermission({ mode: 'readwrite' });
+      await ecrire(poigneeProjet, contenu);
       return { mode: 'dossier', fichier: poigneeProjet.name, premiereFois };
     } catch (e) {
       if (estAnnulation(e)) return null;
@@ -71,6 +82,24 @@ export async function enregistrerProjet(p: Projet, nom: string, ailleurs = false
   }
   telecharger(nom, contenu);
   return { mode: 'telechargement', fichier: nom };
+}
+
+export type ResultatAuto = 'ok' | 'aucun-fichier' | 'autorisation' | 'erreur';
+
+/**
+ * Enregistrement automatique, sans fenêtre : seulement si le fichier du projet est connu et que
+ * le navigateur a déjà donné le droit d'y écrire pendant cette séance.
+ */
+export async function enregistrerAuto(p: Projet): Promise<ResultatAuto> {
+  const h = poigneeProjet;
+  if (!h) return 'aucun-fichier';
+  try {
+    if (h.queryPermission && (await h.queryPermission({ mode: 'readwrite' })) !== 'granted') return 'autorisation';
+    await ecrire(h, contenuFichier(p));
+    return 'ok';
+  } catch {
+    return 'erreur';
+  }
 }
 
 /** Ouvre la boîte « Choisir un fichier ». Renvoie null si l'élève annule. */

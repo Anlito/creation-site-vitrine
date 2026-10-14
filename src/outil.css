@@ -686,3 +686,23 @@ select.o-champ{padding:0 10px}
 .o-pastille-decl{width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.25);flex:0 0 auto}
 .o-pastille-decl.sans{border:2px dashed var(--v-discret)}
 .o-pastille-28{width:28px;height:28px}
+
+/* Colonne de réglages : rien ne doit l'élargir (les boutons passent à la ligne si besoin). */
+.o-panneau-reglages>*,.o-panneau-reglages .o-champ-groupe,.o-panneau-reglages .o-fiche,.o-panneau-reglages .o-sous-fiche{min-width:0;max-width:100%}
+.o-panneau-reglages .o-btn{white-space:normal;height:auto;min-height:44px;padding-top:6px;padding-bottom:6px;line-height:1.2;text-align:center}
+.o-panneau-reglages .o-btn-40{min-height:40px}
+
+/* Enregistrement automatique */
+.o-btn-enregistrer{position:relative}
+.o-btn-enregistrer.enregistre{border-color:var(--v-succes);color:var(--v-succes-texte);background:var(--v-succes-fond)}
+.o-btn-enregistrer.enregistre .ic{color:var(--v-succes)}
+.o-point-alerte{position:absolute;top:-5px;right:-5px;width:12px;height:12px;border-radius:50%;background:#E8A100;border:2px solid #FFFFFF}
+.o-bandeau-succes.alerte{background:var(--v-alerte-fond);border-color:var(--v-alerte-bord)}
+.o-bandeau-succes.alerte .o-bandeau-texte strong:first-child{color:var(--v-alerte-texte)}
+.o-c-alerte{color:var(--v-alerte)}
+
+/* Fiches des réglages (produits, cartes, colonnes) */
+.o-fiche{margin:0;padding:12px;border:2px solid var(--v-bordure-carte);border-radius:10px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.o-fiche-titre{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;font-size:17px}
+.o-fiche .o-vignette{width:52px;height:40px}
+.o-fiche .o-btn{padding-left:10px;padding-right:10px;min-width:0}

@@ -19,7 +19,7 @@ export const VISITES: Record<Etape, EtapeVisite[]> = {
     { cible: '.o-nommer-equipe', titre: 'Ta classe et ton groupe', texte: 'Ces informations sont obligatoires : elles permettent à ton professeur de retrouver ton travail.' },
     { cible: '[data-aide="onglets"]', titre: 'Les parties de l’outil', texte: 'Charte graphique, Pages, Contenu… Il n’y a pas d’ordre : passe d’une partie à l’autre quand tu veux.' },
     { cible: '[data-aide="apercu"]', titre: 'Voir ton site', texte: 'L’aperçu montre ton site en plein écran, comme le verront les visiteurs, sur ordinateur ou sur téléphone.' },
-    { cible: '[data-aide="enregistrer"]', titre: 'Enregistre souvent !', texte: 'La première fois, choisis ton dossier (ta classe › Commun › TECHNOLOGIE › CONCEPT STORE › Prénom-Prénom (ton équipe)). Ensuite, « Enregistrer » met à jour le même fichier.' },
+    { cible: '[data-aide="enregistrer"]', titre: 'Ton projet s’enregistre tout seul', texte: 'Ton projet est dans le dossier de ton équipe et s’enregistre automatiquement : le bouton affiche « Enregistré ». S’il affiche « Enregistrer » avec un point orange, clique dessus.' },
     { cible: '[data-aide="aide"]', titre: 'Besoin d’aide ?', texte: 'Ce bouton ouvre les réponses aux questions fréquentes, et relance la visite de la partie où tu es.' },
   ],
   2: [
@@ -60,7 +60,7 @@ export interface Question { partie: Etape | 0; q: string; r: string[] }
 
 /** Questions fréquentes. partie 0 = valable partout. Chaque réponse est une suite d'étapes courtes. */
 export const QUESTIONS: Question[] = [
-  { partie: 0, q: 'Comment enregistrer mon travail ?', r: ['Clique sur « Enregistrer », en haut à droite.', 'La première fois, choisis ton dossier : ta classe › Commun › TECHNOLOGIE › CONCEPT STORE › Prénom-Prénom (ton équipe).', 'Ensuite, « Enregistrer » met à jour le même fichier. Enregistre souvent !'] },
+  { partie: 0, q: 'Comment enregistrer mon travail ?', r: ['Quand tu crées ton projet, choisis le dossier de ton équipe : ta classe › COMMUN › TECHNOLOGIE › CONCEPT STORE › Prénom_Prénom.', 'Ensuite, ton projet s’enregistre tout seul à chaque modification : le bouton en haut à droite affiche « Enregistré ».', 'Si le bouton affiche « Enregistrer » avec un point orange, clique dessus.'] },
   { partie: 0, q: 'Comment reprendre mon projet à la séance suivante ?', r: ['Ouvre Vitrine.', 'Clique sur « Ouvrir mon projet ».', 'Choisis ton fichier, celui qui se termine par .vitrine.'] },
   { partie: 0, q: 'Comment voir mon site en grand ?', r: ['Clique sur « Aperçu », en haut à droite.', 'Choisis « Ordinateur » ou « Téléphone ». Les liens du menu fonctionnent.', 'Ferme avec « Fermer l’aperçu » ou la touche Échap.'] },
   { partie: 0, q: 'Dans quel ordre dois-je travailler ?', r: ['Il n’y a pas d’ordre obligatoire : passe d’une partie à l’autre avec les onglets du haut.', 'Seuls le nom du site, la classe et les prénoms du groupe sont demandés au début.'] },
