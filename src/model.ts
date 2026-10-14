@@ -20,7 +20,10 @@ export interface BlocImage extends BlocBase { type: 'image'; image: Img; legende
 export interface BlocListe extends BlocBase { type: 'liste'; elements: string[] }
 export interface BlocBouton extends BlocBase { type: 'bouton'; texte: string; cible: string | null }
 export interface BlocGalerie extends BlocBase { type: 'galerie'; images: Img[]; n: 2 | 3 | 4 }
-export interface Produit { id: string; nom: string; desc: string; prix: string; image: Img }
+/** Déclinaison d'un produit (couleur, modèle…) : son nom, la couleur de sa pastille (ou aucune) et sa photo. */
+export interface Declinaison { id: string; nom: string; couleur: string | null; image: Img }
+/** Avec des déclinaisons, chaque déclinaison a sa photo et `image` n'est plus utilisée. */
+export interface Produit { id: string; nom: string; desc: string; prix: string; image: Img; declinaisons?: Declinaison[] }
 export interface BlocProduits extends BlocBase { type: 'produits'; produits: Produit[] }
 
 export interface Carte { id: string; icone: string; image: Img; titre: string; texte: string; cible: string | null }
@@ -106,6 +109,14 @@ export interface Projet {
 export const uid = () => Math.random().toString(36).slice(2, 10);
 
 export const img = (nom: string, alt = ''): Img => ({ src: null, alt, nom });
+
+export const MAX_DECLINAISONS = 8;
+export const COULEURS_DECLINAISONS = ['#C7361F', '#1F6FD1', '#2E8B57', '#F2C230', '#222222', '#FFFFFF', '#E86FA8', '#8A5A2B'];
+export const nouvelleDeclinaison = (n: number, image?: Img): Declinaison => ({
+  id: uid(), nom: `Couleur ${n}`, couleur: COULEURS_DECLINAISONS[(n - 1) % COULEURS_DECLINAISONS.length], image: image ?? img(`Photo · couleur ${n}`),
+});
+/** Déclinaisons d'un produit, ou null s'il n'en a pas. */
+export const declinaisonsDe = (x: Produit) => (x.declinaisons?.length ? x.declinaisons : null);
 
 export const nouveauProduit = (i: number): Produit => ({ id: uid(), nom: `Produit ${i}`, desc: 'Une phrase pour décrire le produit.', prix: '10 €', image: img(`Photo du produit ${i}`) });
 
@@ -383,7 +394,7 @@ export const estImageLourde = (i: Img) => !!i.src && Math.round((i.src.length - 
 export function imagesDuBloc(b: Bloc): Img[] {
   if (b.type === 'banniere' || b.type === 'image') return [b.image];
   if (b.type === 'galerie') return b.images.slice(0, b.n);
-  if (b.type === 'produits') return b.produits.map((x) => x.image);
+  if (b.type === 'produits') return b.produits.flatMap((x) => declinaisonsDe(x)?.map((d) => d.image) ?? [x.image]);
   if (b.type === 'cartes' && b.style === 'image') return b.cartes.map((x) => x.image);
   if (b.type === 'colonnes') return colonnesVisibles(b).flat().flatMap(imagesDuBloc);
   return [];

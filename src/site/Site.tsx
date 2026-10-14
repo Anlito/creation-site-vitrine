@@ -2,8 +2,8 @@
 // à l'aperçu de l'espace enseignant et aux pages HTML exportées.
 import { Icon } from '../components/Icon';
 import {
-  blocsVisibles, colonnesVisibles, menuSite, pagesActives, variablesFondPrincipal, variablesSite,
-  type Bloc, type BlocColonnes, type Img, type Page, type Projet,
+  blocsVisibles, colonnesVisibles, declinaisonsDe, menuSite, pagesActives, variablesFondPrincipal, variablesSite,
+  type Bloc, type BlocColonnes, type Img, type Page, type Produit, type Projet,
 } from '../model';
 import { LogoSite } from './Logo';
 
@@ -137,6 +137,41 @@ function Image({ c, img, cls }: { c: CtxSite; img: Img; cls: string }) {
   );
 }
 
+/**
+ * Photos d'un produit en plusieurs déclinaisons, avec des pastilles pour choisir.
+ * Fonctionne sans JavaScript (boutons radio et CSS), y compris dans le site exporté.
+ */
+function Declinaisons({ c, blocId, produit }: { c: CtxSite; blocId: string; produit: Produit }) {
+  const decl = declinaisonsDe(produit)!;
+  const nom = `d-${blocId}-${produit.id}`;
+  return (
+    <div className="s-decl" role="group" aria-label={`Déclinaisons de ${produit.nom}`}>
+      {decl.map((d, i) => (
+        <input key={d.id} type="radio" className="s-decl-radio" name={nom} id={`${nom}-${i}`} defaultChecked={i === 0} />
+      ))}
+      <div className="s-decl-images">
+        {decl.map((d) => <Image key={d.id} c={c} img={d.image} cls="s-produit-img" />)}
+      </div>
+      <div className="s-decl-bas">
+        <div className="s-decl-choix">
+          {decl.map((d, i) => (
+            <label
+              key={d.id}
+              htmlFor={`${nom}-${i}`}
+              className={`s-decl-pastille${d.couleur ? '' : ' sans-couleur'}`}
+              style={d.couleur ? ({ '--c': d.couleur } as React.CSSProperties) : undefined}
+              title={d.nom}
+            >
+              {d.couleur ? <span className="s-masque">{d.nom}</span> : d.nom}
+            </label>
+          ))}
+        </div>
+        <div className="s-decl-noms" aria-hidden="true">Choix : {decl.map((d) => <span key={d.id} className="s-decl-nom">{d.nom}</span>)}</div>
+      </div>
+    </div>
+  );
+}
+
 function Titre({ niveau, className, children }: { niveau: 1 | 2; className: string; children: React.ReactNode }) {
   return niveau === 1 ? <h1 className={className}>{children}</h1> : <h2 className={className}>{children}</h2>;
 }
@@ -186,7 +221,7 @@ export function ContenuBloc({ c, b, niveau }: { c: CtxSite; b: Bloc; niveau: 1 |
           <div className="s-produits-grille">
             {b.produits.map((x) => (
               <article key={x.id} className="s-produit">
-                <Image c={c} img={x.image} cls="s-produit-img" />
+                {declinaisonsDe(x) ? <Declinaisons c={c} blocId={b.id} produit={x} /> : <Image c={c} img={x.image} cls="s-produit-img" />}
                 <div className="s-produit-corps">
                   <h3 className="s-h s-produit-nom">{x.nom}</h3>
                   {x.desc.trim() && <p className="s-produit-desc">{x.desc}</p>}

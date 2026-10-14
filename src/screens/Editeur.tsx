@@ -7,8 +7,9 @@ import { useProjet } from '../etat';
 import { choisirFichier } from '../lib/fichier';
 import { poidsLisible, preparerImage } from '../lib/image';
 import {
-  colonnesVisibles, contraste, dupliquer, majBloc, nomDansListe, nouveauBloc, nouvelleCarte, nouveauProduit, pagesActives, paletteDe,
-  trouverBloc, variablesSite, type Bloc, type BlocColonnes, type Fond, type Img, type Page, type Projet,
+  COULEURS_DECLINAISONS, MAX_DECLINAISONS, colonnesVisibles, contraste, dupliquer, majBloc, nomDansListe, nouveauBloc, nouvelleCarte,
+  nouvelleDeclinaison, nouveauProduit, pagesActives, paletteDe,
+  trouverBloc, variablesSite, type Bloc, type BlocColonnes, type Declinaison, type Fond, type Img, type Page, type Produit, type Projet,
 } from '../model';
 import { niveauxTitres, SiteBloc, SiteEntete, SitePied, type CtxSite } from '../site/Site';
 import { CharteRapide } from './Charte';
@@ -677,12 +678,25 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
                 <Champ label="Nom du produit" valeur={x.nom} onChange={(nom) => majP({ nom }, 'nom')} />
                 <Champ label="Description" valeur={x.desc} lignes={2} aide="Une phrase courte suffit." onChange={(desc) => majP({ desc }, 'desc')} />
                 <Champ label="Prix" valeur={x.prix} aide="Exemple : « 12 € ». Les prix sont fictifs." onChange={(prix) => majP({ prix }, 'prix')} />
-                <ChampImage
-                  img={x.image}
-                  label="Photo du produit"
-                  onChanger={() => changerImage(x.image, (image) => majP({ image }))}
-                  onAlt={(alt) => majP({ image: { ...x.image, alt } }, 'alt')}
-                />
+                {x.declinaisons?.length ? (
+                  <ReglagesDeclinaisons produit={x} majP={majP} changerImage={changerImage} />
+                ) : (
+                  <>
+                    <ChampImage
+                      img={x.image}
+                      label="Photo du produit"
+                      onChanger={() => changerImage(x.image, (image) => majP({ image }))}
+                      onAlt={(alt) => majP({ image: { ...x.image, alt } }, 'alt')}
+                    />
+                    <button
+                      className="o-btn o-btn-pointille"
+                      onClick={() => majP({ declinaisons: [nouvelleDeclinaison(1, x.image), nouvelleDeclinaison(2)] })}
+                    >
+                      + Ajouter des déclinaisons (couleurs, modèles…)
+                    </button>
+                    <span className="o-aide">Par exemple le même tee-shirt en rouge, bleu et vert, chacun avec sa photo.</span>
+                  </>
+                )}
               </fieldset>
             );
           })}
@@ -857,6 +871,63 @@ function ChoixCouleurTexte({ b, parent, set }: { b: Bloc; parent: BlocColonnes |
           </div>
         </div>
       ) : actuelle && <span className="o-ok"><Icon n="check_circle" />Ce texte est bien lisible sur ce fond.</span>}
+    </div>
+  );
+}
+
+/** Déclinaisons d'un produit : nom, couleur de la pastille (ou aucune), photo et description. */
+function ReglagesDeclinaisons({ produit, majP, changerImage }: {
+  produit: Produit;
+  majP: (champs: Partial<Produit>, cle?: string) => void;
+  changerImage: (actuelle: Img, appliquer: (i: Img) => void) => void;
+}) {
+  const decl = produit.declinaisons ?? [];
+  const maj = (j: number, champs: Partial<Declinaison>, cle?: string) =>
+    majP({ declinaisons: decl.map((d, k) => (k === j ? { ...d, ...champs } : d)) }, cle && `d${j}-${cle}`);
+  const retirer = (j: number) => {
+    const reste = decl.filter((_, k) => k !== j);
+    // Il faut au moins 2 déclinaisons ; avec une seule, le produit redevient simple (sa photo est gardée).
+    if (reste.length < 2) majP({ declinaisons: undefined, image: reste[0]?.image ?? produit.image });
+    else majP({ declinaisons: reste });
+  };
+  return (
+    <div className="o-champ-groupe o-gap8" role="group" aria-label={`Déclinaisons de ${produit.nom}`}>
+      <span className="o-libelle">Déclinaisons <span className="o-facultatif">· {decl.length}</span></span>
+      <span className="o-aide">Sur le site, une pastille par déclinaison : un clic change la photo.</span>
+      {decl.map((d, j) => (
+        <div key={d.id} className="o-sous-fiche">
+          <div className="o-sous-fiche-titre">
+            <span className={`o-pastille-decl${d.couleur ? '' : ' sans'}`} style={d.couleur ? { background: d.couleur } : undefined} aria-hidden="true" />
+            <strong className="o-flex1">{d.nom || `Déclinaison ${j + 1}`}</strong>
+            <button className="o-btn-icone" aria-label={`Monter la déclinaison ${d.nom}`} title="Monter" disabled={j === 0}
+              onClick={() => { const a = [...decl]; [a[j - 1], a[j]] = [a[j], a[j - 1]]; majP({ declinaisons: a }); }}><Icon n="arrow_upward" size={20} /></button>
+            <button className="o-btn-icone o-btn-icone-danger" aria-label={`Retirer la déclinaison ${d.nom}`} title="Retirer" onClick={() => retirer(j)}><Icon n="delete" size={20} /></button>
+          </div>
+          <Champ label="Nom" valeur={d.nom} placeholder="Rouge, Modèle XL…" onChange={(nom) => maj(j, { nom }, 'nom')} />
+          <div className="o-champ-groupe">
+            <span className="o-libelle">Pastille</span>
+            <div className="o-pastilles">
+              {COULEURS_DECLINAISONS.map((hex) => (
+                <button key={hex} className="o-pastille o-pastille-28" aria-label={`Pastille ${hex}`} aria-pressed={d.couleur?.toUpperCase() === hex} style={{ background: hex }} onClick={() => maj(j, { couleur: hex })} />
+              ))}
+              <label className="o-autre-couleur">
+                <input type="color" value={d.couleur ?? '#888888'} aria-label="Autre couleur de pastille" onChange={(e) => maj(j, { couleur: e.target.value.toUpperCase() }, 'couleur')} />
+                Autre
+              </label>
+              <button className="o-btn o-btn-secondaire o-btn-40 o-bascule" aria-pressed={!d.couleur} onClick={() => maj(j, { couleur: null })} title="La pastille affiche le nom au lieu d'une couleur">Texte</button>
+            </div>
+          </div>
+          <ChampImage
+            img={d.image}
+            label="Photo"
+            onChanger={() => changerImage(d.image, (image) => maj(j, { image }))}
+            onAlt={(alt) => maj(j, { image: { ...d.image, alt } }, 'alt')}
+          />
+        </div>
+      ))}
+      {decl.length < MAX_DECLINAISONS && (
+        <button className="o-btn o-btn-pointille" onClick={() => majP({ declinaisons: [...decl, nouvelleDeclinaison(decl.length + 1)] })}>+ Ajouter une déclinaison</button>
+      )}
     </div>
   );
 }

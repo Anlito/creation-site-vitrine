@@ -1,6 +1,6 @@
 // Modèles de page (contenu de départ à compléter) et structures de site toutes prêtes.
 import {
-  img, nouveauBloc, type BlocColonnes, nouvelleCarte, nouveauProduit, uid, type Bloc, type BlocBanniere, type BlocBouton, type BlocCartes,
+  img, nouveauBloc, nouvelleDeclinaison, type BlocColonnes, nouvelleCarte, nouveauProduit, uid, type Bloc, type BlocBanniere, type BlocBouton, type BlocCartes,
   type BlocCitation, type BlocGalerie, type BlocImage, type BlocListe, type BlocParagraphe,
   type BlocProduits, type BlocTitre, type Projet,
 } from '../model';
@@ -30,6 +30,15 @@ const cartesImages = (items: [string, string, string][]): BlocCartes => ({
   cartes: items.map(([nomImage, t, texte], i) => ({ ...nouvelleCarte(i + 1), image: img(nomImage), titre: t, texte })),
 });
 const produits = (n: number): BlocProduits => ({ ...(nouveauBloc('produits') as BlocProduits), produits: Array.from({ length: n }, (_, i) => nouveauProduit(i + 1)) });
+/** Comme produits(n), mais le premier produit est proposé en 3 couleurs (exemple de déclinaisons). */
+const produitsAvecDeclinaisons = (n: number): BlocProduits => {
+  const b = produits(n);
+  b.produits[0] = {
+    ...b.produits[0], nom: 'Produit en 3 couleurs', desc: 'Clique sur une pastille pour voir chaque couleur.',
+    declinaisons: [['Rouge', '#C7361F'], ['Bleu', '#1F6FD1'], ['Vert', '#2E8B57']].map(([nom, couleur], i) => ({ ...nouvelleDeclinaison(i + 1, img(`Photo · ${nom.toLowerCase()}`)), nom, couleur })),
+  };
+  return b;
+};
 
 export interface Modele {
   id: string;
@@ -126,7 +135,7 @@ export const MODELES: Modele[] = [
     blocs: () => [
       titre('Nos produits', true),
       para('Présente ta sélection en une ou deux phrases.'),
-      produits(6),
+      produitsAvecDeclinaisons(6),
     ],
   },
   {
