@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Barre, BandeauMessage } from '../components/Barre';
 import { Icon } from '../components/Icon';
-import { FAMILLES_BLOCS, ICONES_CARTES, TYPES_AVEC_COULEUR, TYPES_BLOCS, TYPES_EN_COLONNE, typeBloc, type TypeBloc } from '../data/constantes';
+import { FAMILLES_BLOCS, ICONES_CARTES, TYPES_ALIGNABLES, TYPES_AVEC_COULEUR, TYPES_BLOCS, TYPES_EN_COLONNE, typeBloc, type TypeBloc } from '../data/constantes';
 import { useProjet } from '../etat';
 import { choisirFichier } from '../lib/fichier';
 import { poidsLisible, preparerImage } from '../lib/image';
@@ -814,6 +814,19 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
           <div className="o-segmente o-segmente-plein">
             <button className="o-segment o-segment-38" aria-pressed={b.style === 'ligne'} onClick={() => set({ style: 'ligne' })}>Une ligne</button>
             <button className="o-segment o-segment-38" aria-pressed={b.style === 'espace'} onClick={() => set({ style: 'espace' })}>Un espace</button>
+          </div>
+        </div>
+      )}
+
+      {TYPES_ALIGNABLES.includes(b.type) && (
+        <div className="o-champ-groupe" role="group" aria-labelledby={`align-${b.id}`}>
+          <span id={`align-${b.id}`} className="o-libelle">Alignement</span>
+          <div className="o-segmente o-segmente-plein">
+            {([['gauche', 'À gauche', 'format_align_left'], ['centre', 'Centré', 'format_align_center'], ['droite', 'À droite', 'format_align_right']] as const).map(([k, label, icon]) => (
+              <button key={k} className="o-segment o-segment-38" aria-pressed={(b.alignement ?? 'gauche') === k} aria-label={label} title={label} onClick={() => set({ alignement: k === 'gauche' ? undefined : k })}>
+                <Icon n={icon} size={24} />
+              </button>
+            ))}
           </div>
         </div>
       )}

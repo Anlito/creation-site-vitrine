@@ -83,6 +83,7 @@ export const QUESTIONS: Question[] = [
   { partie: 4, q: 'Comment déplacer un bloc ?', r: ['Clique sur le bloc.', 'Attrape sa poignée bleue (en haut à gauche) et glisse-le, ou utilise les flèches en haut à droite.'] },
   { partie: 4, q: 'Comment partir d’un modèle ?', r: ['Clique sur « Modèles », au-dessus de la page.', 'Choisis un modèle : sur une page qui a déjà des blocs, choisis « Ajouter à la suite » ou « Remplacer ma page ».', 'Remplace ensuite les textes et les images par les tiens.'] },
   { partie: 4, q: 'Comment proposer un produit en plusieurs couleurs ?', r: ['Clique sur le bloc « Fiches produits », puis sur le produit dans les réglages.', 'Clique sur « + Ajouter des déclinaisons » : donne un nom à chaque déclinaison (Rouge, Bleu…), choisis la couleur de sa pastille et sa photo.', 'Sur le site, un clic sur une pastille montre la photo de cette couleur.'] },
+  { partie: 4, q: 'Comment centrer un texte (ou le mettre à droite) ?', r: ['Clique sur le bloc : titre, paragraphe, liste, citation, bouton ou image.', 'Dans les réglages, va à « Alignement » et choisis à gauche, centré ou à droite.'] },
   { partie: 4, q: 'Comment changer la couleur d’un texte ?', r: ['Clique sur le bloc de texte.', 'Dans les réglages, va à « Couleur du texte » et choisis une couleur.', 'Si un message orange apparaît, ton texte se lit mal : choisis une autre couleur.'] },
   { partie: 4, q: 'Je me suis trompé, comment revenir en arrière ?', r: ['Clique sur « Annuler », au-dessus de la page (ou appuie sur Ctrl + Z).', 'Tu peux annuler plusieurs fois de suite.'] },
 

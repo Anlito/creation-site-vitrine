@@ -316,7 +316,7 @@ export function SiteBloc({ c, b, niveau }: { c: CtxSite; b: Bloc; niveau: 1 | 2 
   // Couleur du texte choisie par l'élève : elle remplace celle de la charte pour ce bloc.
   if (b.couleur) Object.assign(style, { color: b.couleur, '--ink': b.couleur, '--muted': b.couleur });
   return (
-    <div className={`s-b s-b-${b.type} s-fond-${b.fond}`} style={style as React.CSSProperties}>
+    <div className={`s-b s-b-${b.type} s-fond-${b.fond}${b.alignement && b.alignement !== 'gauche' ? ` s-align-${b.alignement}` : ''}`} style={style as React.CSSProperties}>
       <ContenuBloc c={c} b={b} niveau={niveau} />
     </div>
   );

@@ -11,8 +11,9 @@ export interface Img {
 
 export type Fond = 'aucun' | 'douce' | 'principale';
 
-/** `couleur` : couleur du texte choisie par l'élève (sinon celle de la charte). */
-interface BlocBase { id: string; fond: Fond; couleur?: string }
+/** `couleur` : couleur du texte choisie par l'élève (sinon celle de la charte). `alignement` : absent = à gauche. */
+interface BlocBase { id: string; fond: Fond; couleur?: string; alignement?: Alignement }
+export type Alignement = 'gauche' | 'centre' | 'droite';
 export interface BlocBanniere extends BlocBase { type: 'banniere'; image: Img; slogan: string; sous: string; bouton: string; cible: string | null }
 export interface BlocTitre extends BlocBase { type: 'titre'; texte: string; grand: boolean }
 export interface BlocParagraphe extends BlocBase { type: 'paragraphe'; texte: string }

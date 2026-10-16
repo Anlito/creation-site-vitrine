@@ -197,6 +197,16 @@
 .s-separateur{border:0;border-top:2px solid var(--line);margin:clamp(8px,1.5cqw,20px) 0;width:100%}
 .s-espace{height:clamp(16px,3cqw,48px)}
 
+/* Alignement des blocs de texte (choisi par l'élève) */
+.s-align-centre{text-align:center}
+.s-align-droite{text-align:right}
+.s-align-centre .s-para,.s-align-centre .s-figure,.s-align-centre .s-citation{margin-left:auto;margin-right:auto}
+.s-align-droite .s-para,.s-align-droite .s-figure,.s-align-droite .s-citation{margin-left:auto}
+.s-align-centre .s-liste li{justify-content:center}
+.s-align-droite .s-liste li{justify-content:flex-end}
+.s-align-centre .s-citation{border-left:0;padding-left:0;padding-top:16px;border-top:4px solid var(--pri);align-items:center}
+.s-align-droite .s-citation{border-left:0;padding-left:0;padding-right:clamp(20px,3cqw,32px);border-right:4px solid var(--pri);align-items:flex-end}
+
 /* Bandeau d'accueil */
 .s-bandeau{display:flex;flex-direction:column}
 .s-bandeau-img{height:clamp(230px,40cqw,500px)}

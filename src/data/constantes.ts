@@ -120,6 +120,9 @@ export const FAMILLES_BLOCS: FamilleBloc[] = ['Mise en page', 'Texte', 'Images',
 export const TYPES_EN_COLONNE: TypeBloc[] = ['titre', 'paragraphe', 'liste', 'citation', 'image', 'galerie', 'cartes', 'produits', 'horaires', 'formulaire', 'bouton'];
 
 /** Blocs dont on peut changer la couleur du texte. */
+/** Blocs que l'on peut aligner à gauche, au centre ou à droite. */
+export const TYPES_ALIGNABLES: TypeBloc[] = ['titre', 'paragraphe', 'liste', 'citation', 'bouton', 'image'];
+
 export const TYPES_AVEC_COULEUR: TypeBloc[] = ['titre', 'paragraphe', 'liste', 'citation', 'cartes', 'horaires'];
 
 /** Icônes proposées dans les cartes : les symboles du logo et quelques pictogrammes utiles. */

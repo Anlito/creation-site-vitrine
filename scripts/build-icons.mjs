@@ -29,6 +29,7 @@ const NAMES = [
   'call', 'contact_mail', 'splitscreen',
   // Onglets, sous-pages
   'badge', 'account_tree', 'subdirectory_arrow_right', 'expand_more', 'right_panel_close', 'right_panel_open', 'tune',
+  'format_align_left', 'format_align_center', 'format_align_right',
 ];
 
 // Noms renommés dans les versions récentes de la bibliothèque.
