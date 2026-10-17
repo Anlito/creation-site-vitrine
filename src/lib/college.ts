@@ -45,11 +45,14 @@ export function classesProposees(): string[] {
   return duNiveau.length ? duNiveau : toutes;
 }
 
-/** Chemin du dossier du projet : « Bureau › Classe › 4B › COMMUN › TECHNOLOGIE › CONCEPT STORE ». */
+/** Chemin du dossier du projet : « Bureau › Classe › 4B › COMMUN › TECHNOLOGIE › CONCEPT STORE »
+    (groupe 3D1 : « Bureau › Classe › 3D › COMMUN › TECHNOLOGIE › 3D1 › CONCEPT STORE »). */
 export function cheminProjet(classe: string) {
   const c = classe.trim() ? classe.replace(/\s+/g, '').replace(/^(\d)e/i, '$1').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '').toUpperCase() : '4X';
-  const chemin = college?.cheminClasse?.length ? college.cheminClasse : CHEMIN_CLASSE_DEFAUT;
-  return [...chemin, DOSSIER_PROJET].map(p => p.replace('{classe}', c)).join(' › ');
+  // Groupe : 3D1 est un groupe de la classe 3D, son dossier est au bout du chemin de la classe.
+  const groupe = c.match(/^(\d+[A-Z]+)\d+$/);
+  const chemin = (college?.cheminClasse?.length ? college.cheminClasse : CHEMIN_CLASSE_DEFAUT).map(p => p.replace('{classe}', groupe ? groupe[1] : c));
+  return [...chemin, ...(groupe ? [c] : []), DOSSIER_PROJET].join(' › ');
 }
 
 /** Composant React redessiné quand les réglages du collège arrivent (copie de secours, puis version en ligne). */
