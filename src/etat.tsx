@@ -9,7 +9,9 @@ export type Ecran = 'accueil' | 'nommer' | 'projet' | 'enseignant';
 
 export interface Message {
   /** « non-enregistre » : l'élève a fermé la fenêtre « Enregistrer sous » à la création du projet. */
-  type: 'enregistre' | 'exporte' | 'non-enregistre';
+  type: 'enregistre' | 'exporte' | 'non-enregistre' | 'refuse';
+  /** « refuse » : ce qui n'a pas été fait, et quoi faire. */
+  raison?: string;
   /** Enregistré dans un dossier choisi (sinon dans Téléchargements). */
   dossier?: boolean;
   premiereFois?: boolean;
@@ -168,7 +170,7 @@ export function FournisseurApp({ children }: { children: React.ReactNode }) {
     allerEtape: (e) => {
       setEtape(e);
       setEcran('projet');
-      setMessage((m) => (m?.type === 'enregistre' || m?.type === 'non-enregistre' ? m : null));
+      setMessage((m) => (m?.type === 'enregistre' || m?.type === 'non-enregistre' || m?.type === 'refuse' ? m : null));
       window.scrollTo(0, 0);
     },
     ouvrirProjet: (p) => {

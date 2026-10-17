@@ -1,5 +1,6 @@
 // Données fixes de l'outil : palettes, polices, symboles, blocs, pages proposées, contrôles, grille.
 import listeSymboles from './symboles.json';
+import { cheminProjet, dossierEquipe } from '../lib/college';
 
 export interface Palette {
   id: string;
@@ -163,9 +164,7 @@ export const LIMITE_IMAGE = 1024 * 1024; // 1 Mo
 /**
  * Dossier où l'équipe range son projet sur le réseau du collège (affiché comme conseil) : le même dossier
  * d'équipe que la modélisation Concept Store 3D, pour que l'outil professeur associe le site et la 3D.
- * « 4e B » devient « 4B » ; sans classe renseignée, on affiche « 4X ».
+ * Le début du chemin vient des réglages du collège ; « 4e B » devient « 4B » ; sans classe, « 4X ».
  */
-export const dossierConseille = (classe?: string) => {
-  const c = classe?.trim() ? classe.replace(/\s+/g, '').replace(/^(\d)e/i, '$1').toUpperCase() : '4X';
-  return `${c} › COMMUN › TECHNOLOGIE › CONCEPT STORE › Prénom_Prénom (ton équipe)`;
-};
+export const dossierConseille = (classe?: string, equipe?: string) =>
+  `${cheminProjet(classe ?? '')} › ${dossierEquipe(equipe ?? '') || 'Prénom_Prénom'}`;

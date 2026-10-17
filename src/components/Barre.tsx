@@ -1,6 +1,7 @@
 // Barre du haut : des onglets, sans ordre imposé (Charte, Pages et Contenu se font dans l'ordre que l'on veut).
 import { nomFichier, useProjet, type Etape } from '../etat';
 import { dossierConseille } from '../data/constantes';
+import { DOSSIER_PROJET } from '../lib/college';
 import { enregistrerProjet, fichierProjetConnu, peutChoisirDossier } from '../lib/fichier';
 import { InvitationVisite, PanneauAide, VisiteGuidee } from './Aide';
 import { ApercuPlein } from './ApercuPlein';
@@ -20,6 +21,7 @@ export function useEnregistrer() {
   return async (ailleurs = false) => {
     const r = await enregistrerProjet(projet, nomFichier(projet), ailleurs);
     if (!r) return; // fenêtre fermée sans enregistrer
+    if (r.mode === 'refuse') { setMessage({ type: 'refuse', fichier: '', raison: r.raison }); return; }
     marquerEnregistre();
     setMessage({ type: 'enregistre', fichier: r.fichier, dossier: r.mode === 'dossier', premiereFois: r.mode === 'dossier' && r.premiereFois });
   };
@@ -35,7 +37,7 @@ export function Barre() {
     : sauvegarde.etat === 'autorisation'
       ? 'Clique une fois sur « Enregistrer » : ensuite, ton projet s’enregistrera tout seul.'
       : !fichier && peutChoisirDossier()
-        ? `Choisis le dossier de ton équipe : ${dossierConseille(projet.meta.classe)}. Ensuite, ton projet s’enregistrera tout seul.`
+        ? `Choisis le dossier ${DOSSIER_PROJET} de ta classe : l’outil y crée le dossier de ton équipe (${dossierConseille(projet.meta.classe, projet.meta.equipe)}). Ensuite, ton projet s’enregistrera tout seul.`
         : fichier && sauvegarde.etat !== 'erreur'
           ? 'Tes modifications vont s’enregistrer automatiquement dans quelques secondes.'
           : 'Enregistrer ton projet';
@@ -89,15 +91,20 @@ export function BandeauMessage() {
   const { message, setMessage, projet } = useProjet();
   if (!message) return null;
   return (
-    <div role="status" className={`o-bandeau-succes${message.type === 'non-enregistre' ? ' alerte' : ''}`}>
-      {message.type === 'non-enregistre'
+    <div role="status" className={`o-bandeau-succes${message.type === 'non-enregistre' || message.type === 'refuse' ? ' alerte' : ''}`}>
+      {message.type === 'non-enregistre' || message.type === 'refuse'
         ? <Icon n="warning" size={28} className="o-c-alerte" />
         : <Icon n="task_alt" size={28} className="o-c-succes" />}
       <div className="o-bandeau-texte">
-        {message.type === 'non-enregistre' ? (
+        {message.type === 'refuse' ? (
           <>
             <strong>Ton projet n'est pas encore enregistré.</strong>
-            <span>Clique sur «&nbsp;Enregistrer&nbsp;» et choisis le dossier de ton équipe : <strong>{dossierConseille(projet.meta.classe)}</strong>. Ensuite, ton projet s'enregistrera tout seul.</span>
+            <span>{message.raison}</span>
+          </>
+        ) : message.type === 'non-enregistre' ? (
+          <>
+            <strong>Ton projet n'est pas encore enregistré.</strong>
+            <span>Clique sur «&nbsp;Enregistrer&nbsp;» et choisis le dossier <strong>{DOSSIER_PROJET}</strong> de ta classe : l'outil y crée le dossier de ton équipe (<strong>{dossierConseille(projet.meta.classe, projet.meta.equipe)}</strong>). Ensuite, ton projet s'enregistrera tout seul.</span>
           </>
         ) : message.type === 'enregistre' ? (
           <>
@@ -109,7 +116,7 @@ export function BandeauMessage() {
               <span>Le fichier «&nbsp;{message.fichier}&nbsp;» est dans le dossier que tu as choisi. Désormais, <strong>ton projet s'enregistre tout seul</strong> à chaque modification. À la prochaine séance, ouvre-le avec «&nbsp;Ouvrir mon projet&nbsp;».</span>
             )}
             {!message.dossier && (
-              <span>Le fichier «&nbsp;{message.fichier}&nbsp;» est dans ton dossier Téléchargements. Range-le dans ton dossier : <strong>{dossierConseille(projet.meta.classe)}</strong>. À la prochaine séance, ouvre-le avec «&nbsp;Ouvrir mon projet&nbsp;».</span>
+              <span>Le fichier «&nbsp;{message.fichier}&nbsp;» est dans ton dossier Téléchargements. Range-le dans ton dossier : <strong>{dossierConseille(projet.meta.classe, projet.meta.equipe)}</strong>. À la prochaine séance, ouvre-le avec «&nbsp;Ouvrir mon projet&nbsp;».</span>
             )}
           </>
         ) : (

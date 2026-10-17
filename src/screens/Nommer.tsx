@@ -6,6 +6,7 @@ import { dossierConseille } from '../data/constantes';
 import { nomFichier, useApp, useProjet } from '../etat';
 import { enregistrerProjet, oublierFichierProjet, peutChoisirDossier } from '../lib/fichier';
 import { nouveauProjet, type Projet } from '../model';
+import { classesProposees, DOSSIER_PROJET, useCollege } from '../lib/college';
 
 export function Nommer() {
   const { allerA, allerEtape, ouvrirProjet, setUi, setMessage, marquerEnregistre } = useApp();
@@ -14,6 +15,7 @@ export function Nommer() {
   const [equipe, setEquipe] = useState('');
   const [essai, setEssai] = useState(false);
   const champ = useRef<HTMLInputElement>(null);
+  useCollege(); // le chemin affiché suit les réglages du collège
   const erreur = essai && !nom.trim();
   useEffect(() => { champ.current?.focus(); }, []);
 
@@ -35,6 +37,7 @@ export function Nommer() {
     allerEtape(1);
     enregistrement?.then((r) => {
       if (!r) { setMessage({ type: 'non-enregistre', fichier: '' }); return; }
+      if (r.mode === 'refuse') { setMessage({ type: 'refuse', fichier: '', raison: r.raison }); return; }
       marquerEnregistre();
       setMessage({ type: 'enregistre', fichier: r.fichier, dossier: r.mode === 'dossier', premiereFois: true });
     });
@@ -65,8 +68,9 @@ export function Nommer() {
           <div className="o-msg o-msg-info o-nommer-dossier">
             <Icon n="folder_open" />
             <span>
-              Quand tu cliques sur «&nbsp;Créer mon projet&nbsp;», choisis le <strong>dossier de ton équipe</strong>&nbsp;:<br />
-              <strong className="o-c-texte">{dossierConseille(classe)}</strong>.<br />
+              Quand tu cliques sur «&nbsp;Créer mon projet&nbsp;», choisis le dossier <strong>{DOSSIER_PROJET}</strong> de ta classe&nbsp;:
+              l'outil y crée lui-même le dossier de ton équipe&nbsp;:<br />
+              <strong className="o-c-texte">{dossierConseille(classe, equipe)}</strong>.<br />
               Ensuite, ton projet s'y enregistre tout seul.
             </span>
           </div>
@@ -78,14 +82,21 @@ export function Nommer() {
 }
 
 function ChampsEquipe({ classe, equipe, setClasse, setEquipe, verifier }: { classe: string; equipe: string; setClasse: (s: string) => void; setEquipe: (s: string) => void; verifier: boolean }) {
+  // Classes des réglages du collège (Labo Blocs) ; la classe d'un ancien projet reste proposée.
+  useCollege();
+  const classes = classesProposees();
+  if (classe && !classes.includes(classe)) classes.push(classe);
   const sansClasse = verifier && !classe.trim();
   const sansEquipe = verifier && !equipe.trim();
   return (
     <div className="o-nommer-equipe">
       <label className="o-champ-groupe o-classe">
         <span className="o-libelle">Ta classe</span>
-        <input className={`o-champ${sansClasse ? ' en-erreur' : ''}`} value={classe} maxLength={12} placeholder="4e B" aria-invalid={sansClasse || undefined} required onChange={(e) => setClasse(e.target.value)} />
-        {sansClasse && <span className="o-aide-erreur"><Icon n="error" size={20} />Écris ta classe.</span>}
+        <select className={`o-champ${sansClasse ? ' en-erreur' : ''}`} value={classe} aria-invalid={sansClasse || undefined} required onChange={(e) => setClasse(e.target.value)}>
+          <option value="">Choisis ta classe</option>
+          {classes.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        {sansClasse && <span className="o-aide-erreur"><Icon n="error" size={20} />Choisis ta classe.</span>}
       </label>
       <label className="o-champ-groupe o-equipe">
         <span className="o-libelle">Les prénoms de ton groupe</span>

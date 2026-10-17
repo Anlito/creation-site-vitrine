@@ -77,7 +77,7 @@ export function Controle() {
         <div className="o-colonne o-gap16">
           <div className="o-carte-blanche o-carte-action" data-aide="enregistrer-carte">
             <h2 className="o-t20"><Icon n="save" size={26} className="o-c-action" />Pour continuer plus tard</h2>
-            <p className="o-aide o-lh145">Garde ton travail dans ton dossier : <strong className="o-c-texte">{dossierConseille(projet.meta.classe)}</strong>. Tu le rouvriras à la prochaine séance.</p>
+            <p className="o-aide o-lh145">Garde ton travail dans ton dossier : <strong className="o-c-texte">{dossierConseille(projet.meta.classe, projet.meta.equipe)}</strong>. Tu le rouvriras à la prochaine séance.</p>
             <button className="o-btn o-btn-secondaire o-btn-50" onClick={() => enregistrer()}>Enregistrer mon projet</button>
             {peutChoisirDossier() && fichierProjetConnu() && (
               <button className="o-btn o-btn-discret" onClick={() => enregistrer(true)}><Icon n="folder_open" />Enregistrer dans un autre dossier</button>
