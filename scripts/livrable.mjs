@@ -18,6 +18,8 @@ if (!existsSync(outil)) throw new Error('dist/index.html manquant : lancer d\'ab
 rmSync(sortie, { recursive: true, force: true });
 mkdirSync(join(sortie, 'Vitrine'), { recursive: true });
 cpSync(outil, join(sortie, 'Vitrine', 'index.html'));
+// Copie de secours des réglages du collège (liste des classes, chemin), lue par l'outil à côté de index.html.
+cpSync(join(racine, 'dist', 'college.js'), join(sortie, 'Vitrine', 'college.js'));
 for (const f of readdirSync(join(racine, 'livraison'))) {
   const texte = readFileSync(join(racine, 'livraison', f), 'utf8').replaceAll('{{VERSION}}', version).replaceAll('{{DATE}}', date);
   writeFileSync(join(sortie, f), texte);

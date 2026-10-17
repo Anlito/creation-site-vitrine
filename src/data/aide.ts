@@ -60,7 +60,7 @@ export interface Question { partie: Etape | 0; q: string; r: string[] }
 
 /** Questions fréquentes. partie 0 = valable partout. Chaque réponse est une suite d'étapes courtes. */
 export const QUESTIONS: Question[] = [
-  { partie: 0, q: 'Comment enregistrer mon travail ?', r: ['Quand tu crées ton projet, choisis le dossier de ton équipe : ta classe › COMMUN › TECHNOLOGIE › CONCEPT STORE › Prénom_Prénom.', 'Ensuite, ton projet s’enregistre tout seul à chaque modification : le bouton en haut à droite affiche « Enregistré ».', 'Si le bouton affiche « Enregistrer » avec un point orange, clique dessus.'] },
+  { partie: 0, q: 'Comment enregistrer mon travail ?', r: ['Quand tu crées ton projet, choisis le dossier CONCEPT STORE de ta classe : l’outil y crée lui-même le dossier de ton équipe (Prénom_Prénom).', 'Ensuite, ton projet s’enregistre tout seul à chaque modification : le bouton en haut à droite affiche « Enregistré ».', 'Si le bouton affiche « Enregistrer » avec un point orange, clique dessus.'] },
   { partie: 0, q: 'Comment reprendre mon projet à la séance suivante ?', r: ['Ouvre Vitrine.', 'Clique sur « Ouvrir mon projet ».', 'Choisis ton fichier, celui qui se termine par .vitrine.'] },
   { partie: 0, q: 'Comment voir mon site en grand ?', r: ['Clique sur « Aperçu », en haut à droite.', 'Choisis « Ordinateur » ou « Téléphone ». Les liens du menu fonctionnent.', 'Ferme avec « Fermer l’aperçu » ou la touche Échap.'] },
   { partie: 0, q: 'Dans quel ordre dois-je travailler ?', r: ['Il n’y a pas d’ordre obligatoire : passe d’une partie à l’autre avec les onglets du haut.', 'Seuls le nom du site, la classe et les prénoms du groupe sont demandés au début.'] },

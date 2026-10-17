@@ -1,9 +1,11 @@
 // Enregistrement et ouverture du fichier .vitrine (JSON, images en data URL). Aucun serveur.
-// Sur Chrome et Edge, l'élève choisit le dossier (fenêtre « Enregistrer sous ») ; le navigateur
-// retient ce dossier, et les enregistrements suivants mettent à jour le même fichier.
+// Sur Chrome et Edge, le premier enregistrement fait choisir le dossier CONCEPT STORE de la classe : l'outil y
+// crée toujours lui-même le dossier de l'équipe (Lea_Malik, comme Concept Store 3D), puis le fichier ; les
+// enregistrements suivants mettent à jour le même fichier. « Enregistrer ailleurs » garde « Enregistrer sous ».
 // Ailleurs (Firefox), le fichier part dans Téléchargements.
 // Quand le fichier est connu, le projet y est aussi enregistré automatiquement (voir enregistrerAuto).
 import { estProjet, normaliserProjet, type Projet } from '../model';
+import { cheminProjet, dossierEquipe, DOSSIER_PROJET } from './college';
 
 // API d'accès aux fichiers (Chrome, Edge) : types minimaux, absents de la bibliothèque DOM standard.
 interface Poignee {
@@ -13,11 +15,17 @@ interface Poignee {
   queryPermission?: (o: { mode: 'readwrite' }) => Promise<PermissionState>;
   requestPermission?: (o: { mode: 'readwrite' }) => Promise<PermissionState>;
 }
+interface PoigneeDossier {
+  name: string;
+  getDirectoryHandle: (nom: string, o?: { create?: boolean }) => Promise<PoigneeDossier>;
+  getFileHandle: (nom: string, o?: { create?: boolean }) => Promise<Poignee>;
+}
 type OptionsFichier = { id?: string; startIn?: string; suggestedName?: string; types?: { description: string; accept: Record<string, string[]> }[] };
 declare global {
   interface Window {
     showSaveFilePicker?: (o?: OptionsFichier) => Promise<Poignee>;
     showOpenFilePicker?: (o?: OptionsFichier & { multiple?: boolean }) => Promise<Poignee[]>;
+    showDirectoryPicker?: (o?: { id?: string; mode?: 'readwrite'; startIn?: string }) => Promise<PoigneeDossier>;
   }
 }
 
@@ -47,7 +55,16 @@ export function telecharger(nom: string, contenu: Blob) {
 export type ResultatEnregistrement =
   | { mode: 'dossier'; fichier: string; premiereFois: boolean }
   | { mode: 'telechargement'; fichier: string }
+  | { mode: 'refuse'; raison: string } // dossier refusé, ou projet déjà présent (jamais écrasé)
   | null; // l'élève a fermé la fenêtre sans enregistrer
+
+const simple = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
+/** Dossier choisi : « projet » (CONCEPT STORE), « equipe » (le dossier de l'équipe lui-même) ou « autre ». */
+export function sorteDeDossier(nom: string, equipe: string): 'projet' | 'equipe' | 'autre' {
+  if (simple(nom) === simple(equipe)) return 'equipe';
+  if (simple(nom) === simple(DOSSIER_PROJET)) return 'projet';
+  return 'autre';
+}
 
 /**
  * Enregistre le projet. `ailleurs` force la fenêtre « Enregistrer sous » même si le fichier est déjà connu.
@@ -66,7 +83,22 @@ export async function enregistrerProjet(p: Projet, nom: string, ailleurs = false
   if (peutChoisirDossier()) {
     let premiereFois = false;
     try {
-      if (!poigneeProjet || ailleurs) {
+      const equipe = dossierEquipe(p.meta.equipe ?? '');
+      if (!poigneeProjet && !ailleurs && equipe && typeof window.showDirectoryPicker === 'function') {
+        // Le dossier de l'équipe est toujours créé par l'outil : l'élève choisit le dossier CONCEPT STORE.
+        const dir = await window.showDirectoryPicker({ id: 'vitrine-projet', mode: 'readwrite' });
+        const sorte = sorteDeDossier(dir.name, equipe);
+        if (sorte === 'equipe')
+          return { mode: 'refuse', raison: `Tu as choisi « ${dir.name} », le dossier de ton équipe : l’outil le crée lui-même. Clique sur « Enregistrer » et choisis le dossier qui le contient, « ${DOSSIER_PROJET} ».` };
+        if (sorte === 'autre' && !window.confirm(`Le dossier choisi s’appelle « ${dir.name} ».\nLe dossier attendu est « ${DOSSIER_PROJET} » (${cheminProjet(p.meta.classe ?? '')}).\n\nOK : créer le dossier « ${equipe} » dedans.\nAnnuler : ne rien enregistrer maintenant.`))
+          return { mode: 'refuse', raison: `Rien n’a été enregistré. Clique sur « Enregistrer » et choisis le dossier « ${DOSSIER_PROJET} » de ta classe : l’outil y crée le dossier de ton équipe.` };
+        const dossier = await dir.getDirectoryHandle(equipe, { create: true });
+        const existant = await dossier.getFileHandle(nom).catch(() => null);
+        if (existant && (await existant.getFile()).size)
+          return { mode: 'refuse', raison: `Le dossier « ${equipe} » contient déjà « ${nom} » : il n’a pas été touché. Pour continuer ce projet, ouvre-le avec « Ouvrir mon projet ».` };
+        poigneeProjet = await dossier.getFileHandle(nom, { create: true });
+        premiereFois = true;
+      } else if (!poigneeProjet || ailleurs) {
         poigneeProjet = await window.showSaveFilePicker!({ id: 'vitrine-projet', startIn: 'documents', suggestedName: nom, types: TYPE_VITRINE });
         premiereFois = true;
       }
