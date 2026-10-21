@@ -1,5 +1,27 @@
 # Vitrine
 
+<!-- suivi-maintenance:debut -->
+## État du projet et améliorations documentées — 21 octobre 2026
+
+- La version locale reprend la dernière version de la branche principale publiée sur GitHub.
+- Le fichier dist/index.html reste le livrable de l’outil Vitrine ; les commandes de construction et le fonctionnement des sauvegardes sont décrits ci-dessous.
+- Aucune fonction de l’application n’a été modifiée pendant cette intervention de synchronisation et de documentation. Le dossier local test-results/ préexistant est conservé comme résultat de test, hors des sources suivies.
+
+### Référence locale et maintenance
+
+Dossier de travail de référence : **Documents/ConceptStoreSite**. Dépôt : [Anlito/creation-site-vitrine](https://github.com/Anlito/creation-site-vitrine). La branche principale est **main**. Les copies temporaires d’un chat ou les worktrees servent au travail intermédiaire ; elles ne remplacent pas ce dossier.
+
+À chaque intervention :
+
+1. Vérifier les modifications locales et la version publiée avant de commencer ; sauvegarder le travail non enregistré.
+2. Décrire dans ce README les améliorations, les vérifications, les limites et les opérations restantes.
+3. Publier les changements autorisés, puis synchroniser le dossier local de référence avec le même commit.
+4. Contrôler le commit local, le commit distant et les fichiers restants avant d’annoncer que le projet est à jour. Signaler explicitement tout décalage ou travail conservé hors publication.
+
+Cette règle permet de reprendre le projet dans un autre outil local sans perdre les dernières améliorations. Une publication du site ne met pas automatiquement à jour les dossiers du PC.
+
+<!-- suivi-maintenance:fin -->
+
 Outil web qui permet aux élèves de 4e de créer le site vitrine de leur concept store (projet de technologie « Concept Store 4.0 »). Il n'y a ni compte, ni serveur, ni installation. (Les maquettes de design d'origine ne sont pas publiées dans ce dépôt.)
 
 ## Utiliser l'outil
