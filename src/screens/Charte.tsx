@@ -10,13 +10,14 @@ import { useProjet } from '../etat';
 import { choisirFichier } from '../lib/fichier';
 import { preparerImage } from '../lib/image';
 import {
-  contraste, corrigerContraste, paletteDe, policesDe, uid, variablesSite,
+  contraste, corrigerContraste, imagesDuBloc, paletteDe, policesDe, uid, variablesSite,
   type Charte as TCharte, type Logo, type PoliceImportee, type Projet,
 } from '../model';
 import { FAMILLES_INTEGREES } from '../polices';
 import { telechargerLogo, type TypeTelechargement } from '../lib/logo-image';
 import { fondsLogo, LogoGrand, MarqueLogo, styleLogo } from '../site/Logo';
 import { SiteEntete } from '../site/Site';
+import { IllustrationBoutique, IllustrationProduit } from '../site/Illustrations';
 
 export function Charte() {
   const { ui, setUi } = useProjet();
@@ -194,6 +195,9 @@ function ApercuCharte() {
   const bandeau = accueil.blocs.find((b) => b.type === 'banniere');
   const slogan = bandeau && bandeau.type === 'banniere' && bandeau.slogan.trim() && bandeau.slogan !== SLOGAN_PAR_DEFAUT
     ? bandeau.slogan : 'Ton slogan apparaîtra ici, en grand.';
+  // Les photos de l'équipe si elle en a déjà mis, sinon des illustrations : on voit l'effet des coins des images.
+  const photos = projet.pages.flatMap((p) => p.blocs.flatMap(imagesDuBloc)).filter((i) => i.src);
+  const photo = (k: number, illu: React.ReactNode) => (photos[k] ? <img src={photos[k].src!} alt="" /> : illu);
   const cartes = [
     { icon: 'storefront', t: 'Le concept', d: 'Comment marche notre magasin.' },
     { icon: 'shopping_basket', t: 'Nos produits', d: 'Tout ce que tu trouves chez nous.' },
@@ -210,7 +214,7 @@ function ApercuCharte() {
           <div className="site" style={variablesSite(projet) as React.CSSProperties}>
             <SiteEntete c={{ p: projet, page: accueil, outil: true }} />
             <div className="s-demo">
-              <div className="s-ph s-demo-img"><span className="s-ph-texte">Photo de la boutique</span></div>
+              <div className="s-demo-img" data-testid="apercu-image">{photo(0, <IllustrationBoutique />)}</div>
               <div className="s-demo-texte">
                 <span className="s-demo-sur">{projet.nom}</span>
                 <h1 className="s-h s-demo-titre">{slogan}</h1>
@@ -221,8 +225,9 @@ function ApercuCharte() {
                 </div>
               </div>
               <div className="s-demo-cartes">
-                {cartes.map((k) => (
+                {cartes.map((k, i) => (
                   <div key={k.t} className="s-demo-carte">
+                    <div className="s-demo-carte-img">{photo(i + 1, <IllustrationProduit n={i} />)}</div>
                     <span className="s-demo-icone"><Icon n={k.icon} size={20} /></span>
                     <strong className="s-h">{k.t}</strong>
                     <span>{k.d}</span>

@@ -225,7 +225,9 @@ select.o-champ{padding:0 10px}
 
 /* Maquette de page d'accueil de la charte */
 .s-demo{padding:24px 26px;display:flex;flex-direction:column;gap:22px}
-.s-demo-img{height:210px}
+.s-demo-img{height:210px;border-radius:var(--img);overflow:hidden;background:var(--surf)}
+.s-demo-img img,.s-demo-carte-img img{width:100%;height:100%;object-fit:cover;display:block}
+.s-demo-carte-img{height:96px;margin:-4px -4px 6px;border-radius:var(--img);overflow:hidden;background:var(--surf)}
 .s-demo-texte{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .s-demo-sur{font-size:16px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.06em}
 .s-demo-titre{margin:0;font-size:38px;line-height:1.1;color:var(--ink);text-wrap:balance}
