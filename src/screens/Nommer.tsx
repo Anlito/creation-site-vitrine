@@ -68,8 +68,8 @@ export function Nommer() {
           <div className="o-msg o-msg-info o-nommer-dossier">
             <Icon n="folder_open" />
             <span>
-              Quand tu cliques sur «&nbsp;Créer mon projet&nbsp;», choisis le dossier <strong>{DOSSIER_PROJET}</strong> de ta classe&nbsp;:
-              l'outil y crée lui-même le dossier de ton équipe&nbsp;:<br />
+              Quand tu cliques sur «&nbsp;Créer mon projet&nbsp;», choisis le dossier <strong>{DOSSIER_PROJET}</strong> de ta classe,
+              ou celui de ton équipe s'il existe déjà (créé avec Concept Store 3D)&nbsp;: un seul dossier par équipe&nbsp;:<br />
               <strong className="o-c-texte">{dossierConseille(classe, equipe)}</strong>.<br />
               Ensuite, ton projet s'y enregistre tout seul.
             </span>

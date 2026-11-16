@@ -1,11 +1,12 @@
 // Enregistrement et ouverture du fichier .vitrine (JSON, images en data URL). Aucun serveur.
-// Sur Chrome et Edge, le premier enregistrement fait choisir le dossier CONCEPT STORE de la classe : l'outil y
-// crée toujours lui-même le dossier de l'équipe (Lea_Malik, comme Concept Store 3D), puis le fichier ; les
+// Sur Chrome et Edge, le premier enregistrement fait choisir le dossier CONCEPT STORE de la classe (ou celui de
+// l'équipe) : un seul dossier par équipe, partagé avec Concept Store 3D (voir rangement.ts), puis le fichier ; les
 // enregistrements suivants mettent à jour le même fichier. « Enregistrer ailleurs » garde « Enregistrer sous ».
 // Ailleurs (Firefox), le fichier part dans Téléchargements.
 // Quand le fichier est connu, le projet y est aussi enregistré automatiquement (voir enregistrerAuto).
 import { estProjet, normaliserProjet, type Projet } from '../model';
 import { cheminProjet, dossierEquipe, DOSSIER_PROJET } from './college';
+import { dossierDeLEquipe, type DossierRangement } from './rangement';
 
 // API d'accès aux fichiers (Chrome, Edge) : types minimaux, absents de la bibliothèque DOM standard.
 interface Poignee {
@@ -58,14 +59,6 @@ export type ResultatEnregistrement =
   | { mode: 'refuse'; raison: string } // dossier refusé, ou projet déjà présent (jamais écrasé)
   | null; // l'élève a fermé la fenêtre sans enregistrer
 
-const simple = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
-/** Dossier choisi : « projet » (CONCEPT STORE), « equipe » (le dossier de l'équipe lui-même) ou « autre ». */
-export function sorteDeDossier(nom: string, equipe: string): 'projet' | 'equipe' | 'autre' {
-  if (simple(nom) === simple(equipe)) return 'equipe';
-  if (simple(nom) === simple(DOSSIER_PROJET)) return 'projet';
-  return 'autre';
-}
-
 /**
  * Enregistre le projet. `ailleurs` force la fenêtre « Enregistrer sous » même si le fichier est déjà connu.
  */
@@ -85,17 +78,23 @@ export async function enregistrerProjet(p: Projet, nom: string, ailleurs = false
     try {
       const equipe = dossierEquipe(p.meta.equipe ?? '');
       if (!poigneeProjet && !ailleurs && equipe && typeof window.showDirectoryPicker === 'function') {
-        // Le dossier de l'équipe est toujours créé par l'outil : l'élève choisit le dossier CONCEPT STORE.
+        // Un seul dossier par équipe : retrouvé (même créé par Concept Store 3D, prénoms dans un autre ordre), sinon créé.
         const dir = await window.showDirectoryPicker({ id: 'vitrine-projet', mode: 'readwrite' });
-        const sorte = sorteDeDossier(dir.name, equipe);
-        if (sorte === 'equipe')
-          return { mode: 'refuse', raison: `Tu as choisi « ${dir.name} », le dossier de ton équipe : l’outil le crée lui-même. Clique sur « Enregistrer » et choisis le dossier qui le contient, « ${DOSSIER_PROJET} ».` };
-        if (sorte === 'autre' && !window.confirm(`Le dossier choisi s’appelle « ${dir.name} ».\nLe dossier attendu est « ${DOSSIER_PROJET} » (${cheminProjet(p.meta.classe ?? '')}).\n\nOK : créer le dossier « ${equipe} » dedans.\nAnnuler : ne rien enregistrer maintenant.`))
-          return { mode: 'refuse', raison: `Rien n’a été enregistré. Clique sur « Enregistrer » et choisis le dossier « ${DOSSIER_PROJET} » de ta classe : l’outil y crée le dossier de ton équipe.` };
-        const dossier = await dir.getDirectoryHandle(equipe, { create: true });
+        const r = await dossierDeLEquipe(dir as unknown as DossierRangement, p.meta.equipe ?? '', equipe, DOSSIER_PROJET);
+        const refus = { mode: 'refuse' as const, raison: `Rien n’a été enregistré. Clique sur « Enregistrer » et choisis le dossier « ${DOSSIER_PROJET} » de ta classe, ou celui de ton équipe.` };
+        let dossier: PoigneeDossier;
+        if ('dossier' in r) dossier = r.dossier as unknown as PoigneeDossier;
+        else if (r.travail) {
+          // Un dossier qui contient déjà un projet : sans doute un dossier d'équipe au nom inattendu, pas de sous-dossier dedans.
+          if (!window.confirm(`« ${dir.name} » contient déjà un projet.\n\nOK : c’est le dossier de mon équipe, enregistrer ici.\nAnnuler : ne rien enregistrer maintenant.`)) return refus;
+          dossier = dir;
+        } else {
+          if (!window.confirm(`Le dossier choisi s’appelle « ${dir.name} ».\nLe dossier attendu est « ${DOSSIER_PROJET} » (${cheminProjet(p.meta.classe ?? '')}).\n\nOK : créer le dossier « ${equipe} » dedans.\nAnnuler : ne rien enregistrer maintenant.`)) return refus;
+          dossier = await dir.getDirectoryHandle(equipe, { create: true });
+        }
         const existant = await dossier.getFileHandle(nom).catch(() => null);
         if (existant && (await existant.getFile()).size)
-          return { mode: 'refuse', raison: `Le dossier « ${equipe} » contient déjà « ${nom} » : il n’a pas été touché. Pour continuer ce projet, ouvre-le avec « Ouvrir mon projet ».` };
+          return { mode: 'refuse', raison: `Le dossier « ${dossier.name} » contient déjà « ${nom} » : il n’a pas été touché. Pour continuer ce projet, ouvre-le avec « Ouvrir mon projet ».` };
         poigneeProjet = await dossier.getFileHandle(nom, { create: true });
         premiereFois = true;
       } else if (!poigneeProjet || ailleurs) {
