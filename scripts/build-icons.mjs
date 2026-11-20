@@ -13,7 +13,7 @@ const NAMES = [
   'check_circle', 'sync', 'upload', 'close', 'drag_indicator', 'lock', 'arrow_upward', 'arrow_downward', 'add',
   'computer', 'smartphone', 'undo', 'palette', 'lightbulb', 'south', 'add_box', 'content_copy', 'delete',
   'ads_click', 'compress', 'open_in_new', 'cancel', 'task_alt', 'public', 'download', 'table_view', 'menu', 'info',
-  'location_on', 'schedule', 'chevron_right', 'edit', 'visibility', 'image',
+  'location_on', 'schedule', 'chevron_right', 'edit', 'visibility', 'image', 'crop', 'zoom_in', 'zoom_out', 'open_with', 'center_focus_strong',
   // Blocs
   'panorama', 'title', 'notes', 'format_list_bulleted', 'smart_button', 'photo_library',
   // Symboles du logo

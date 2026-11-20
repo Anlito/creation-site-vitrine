@@ -3,8 +3,7 @@
 import { Icon } from '../components/Icon';
 import {
   blocsVisibles, colonnesVisibles, declinaisonsDe, menuSite, pagesActives, variablesFondPrincipal, variablesSite,
-  type Bloc, type BlocColonnes, type Img, type Page, type Produit, type Projet,
-} from '../model';
+  type Bloc, type BlocColonnes, type Img, type Page, type Produit, type Projet, styleCadrage } from '../model';
 import { LogoSite } from './Logo';
 
 export interface CtxSite {
@@ -119,7 +118,7 @@ function Image({ c, img, cls }: { c: CtxSite; img: Img; cls: string }) {
   if (s) {
     return (
       <div className={`${cls} s-img-boite`}>
-        <img src={s} alt={img.alt} />
+        <img src={s} alt={img.alt} style={styleCadrage(img.cadrage)} />
         {badge}
       </div>
     );

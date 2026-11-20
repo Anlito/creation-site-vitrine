@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Barre, BandeauMessage } from '../components/Barre';
 import { Icon } from '../components/Icon';
+import { Recadrer } from '../components/Recadrer';
 import { FAMILLES_BLOCS, ICONES_CARTES, TYPES_ALIGNABLES, TYPES_AVEC_COULEUR, TYPES_BLOCS, TYPES_EN_COLONNE, typeBloc, type TypeBloc } from '../data/constantes';
 import { useProjet } from '../etat';
 import { choisirFichier } from '../lib/fichier';
@@ -9,8 +10,7 @@ import { poidsLisible, preparerImage } from '../lib/image';
 import {
   COULEURS_DECLINAISONS, MAX_DECLINAISONS, colonnesVisibles, contraste, dupliquer, majBloc, nomDansListe, nouveauBloc, nouvelleCarte,
   nouvelleDeclinaison, nouveauProduit, pagesActives, paletteDe,
-  trouverBloc, variablesSite, type Bloc, type BlocColonnes, type Declinaison, type Fond, type Img, type Page, type Produit, type Projet,
-} from '../model';
+  trouverBloc, variablesSite, type Bloc, type BlocColonnes, type Declinaison, type Fond, type Img, type Page, type Produit, type Projet, styleCadrage, type Cadrage } from '../model';
 import { niveauxTitres, SiteBloc, SiteEntete, SitePied, type CtxSite } from '../site/Site';
 import { CharteRapide } from './Charte';
 import { PanneauModeles } from './Modeles';
@@ -522,7 +522,7 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
     if (!f) return;
     try {
       const im = await preparerImage(f);
-      appliquer({ ...actuelle, src: im.src, nom: im.nom });
+      appliquer({ ...actuelle, src: im.src, nom: im.nom, cadrage: undefined }); // nouvelle image : centrée
       setUi({ reduction: im.reduite ? { blocId: b.id, avant: im.avant, apres: im.apres } : null });
     } catch {
       setUi({ reduction: null });
@@ -600,7 +600,8 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
       )}
 
       {(b.type === 'banniere' || b.type === 'image') && (
-        <ChampImage img={b.image} label="Image" onChanger={() => changerImage(b.image, (image) => set({ image }))} onAlt={(alt) => set({ image: { ...b.image, alt } }, 'alt')} />
+        <ChampImage img={b.image} label="Image" forme={b.type === 'banniere' ? 5 / 2 : 'auto'} bandeau={b.type === 'banniere'} onCadrage={(cadrage) => set({ image: { ...b.image, cadrage } })}
+          onChanger={() => changerImage(b.image, (image) => set({ image }))} onAlt={(alt) => set({ image: { ...b.image, alt } }, 'alt')} />
       )}
 
       {b.type === 'banniere' && (
@@ -686,6 +687,7 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
                       img={x.image}
                       label="Photo du produit"
                       onChanger={() => changerImage(x.image, (image) => majP({ image }))}
+                      onCadrage={(cadrage) => majP({ image: { ...x.image, cadrage } })}
                       onAlt={(alt) => majP({ image: { ...x.image, alt } }, 'alt')}
                     />
                     <button
@@ -720,6 +722,7 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
               img={im}
               label={`Image ${j + 1}`}
               onChanger={() => changerImage(im, (nv) => { const images = [...b.images]; images[j] = nv; set({ images }); })}
+              onCadrage={(cadrage) => { const images = [...b.images]; images[j] = { ...im, cadrage }; set({ images }); }}
               onAlt={(alt) => { const images = [...b.images]; images[j] = { ...im, alt }; set({ images }, `alt-${j}`); }}
             />
           ))}
@@ -759,7 +762,7 @@ function Reglages({ b, parent, colonne, pages, set, supprimer, selectionner, rem
                     </span>
                   </label>
                 ) : (
-                  <ChampImage img={k.image} label="Image" onChanger={() => changerImage(k.image, (image) => majC({ image }))} onAlt={(alt) => majC({ image: { ...k.image, alt } }, 'alt')} />
+                  <ChampImage img={k.image} label="Image" onCadrage={(cadrage) => majC({ image: { ...k.image, cadrage } })} onChanger={() => changerImage(k.image, (image) => majC({ image }))} onAlt={(alt) => majC({ image: { ...k.image, alt } }, 'alt')} />
                 )}
                 <Champ label="Titre" valeur={k.titre} onChange={(titre) => majC({ titre }, 'titre')} />
                 <Champ label="Texte" valeur={k.texte} lignes={2} onChange={(texte) => majC({ texte }, 'texte')} />
@@ -934,6 +937,7 @@ function ReglagesDeclinaisons({ produit, majP, changerImage }: {
             img={d.image}
             label="Photo"
             onChanger={() => changerImage(d.image, (image) => maj(j, { image }))}
+            onCadrage={(cadrage) => maj(j, { image: { ...d.image, cadrage } })}
             onAlt={(alt) => maj(j, { image: { ...d.image, alt } }, 'alt')}
           />
         </div>
@@ -974,7 +978,12 @@ function ChoixPage({ valeur, pages, onChange, facultatif }: { valeur: string | n
   );
 }
 
-function ChampImage({ img, label, onChanger, onAlt }: { img: Img; label: string; onChanger: () => void; onAlt: (alt: string) => void }) {
+/** `forme` : rapport largeur / hauteur du cadre de l'image sur le site (4/3 par défaut), ou « auto » (image entière). */
+function ChampImage({ img, label, onChanger, onAlt, onCadrage, forme = 4 / 3, bandeau }: {
+  img: Img; label: string; onChanger: () => void; onAlt: (alt: string) => void;
+  onCadrage?: (c: Cadrage | undefined) => void; forme?: number | 'auto'; bandeau?: boolean;
+}) {
+  const [recadrer, setRecadrer] = useState(false);
   const manque = !img.alt.trim();
   const id = useRef(`alt-${Math.random().toString(36).slice(2, 8)}`).current;
   return (
@@ -982,10 +991,16 @@ function ChampImage({ img, label, onChanger, onAlt }: { img: Img; label: string;
       <span className="o-libelle">{label}</span>
       <div className="o-ligne-boutons o-gap10">
         {img.src
-          ? <img className="o-vignette" src={img.src} alt="" />
+          ? <span className="o-vignette o-vignette-cadre"><img src={img.src} alt="" style={styleCadrage(img.cadrage)} /></span>
           : <span className="o-vignette o-vignette-vide" />}
         <button className="o-btn o-btn-secondaire o-flex1" onClick={onChanger}><Icon n="upload" />{img.src ? "Changer l'image" : 'Choisir une image'}</button>
       </div>
+      {img.src && onCadrage && (
+        <button className={`o-btn o-btn-discret o-recadrer-btn${img.cadrage ? ' recadree' : ''}`} onClick={() => setRecadrer(true)}>
+          <Icon n="crop" size={20} />{img.cadrage ? 'Recadrée · modifier le cadrage' : "Recadrer l'image"}
+        </button>
+      )}
+      {recadrer && onCadrage && <Recadrer img={img} forme={forme} bandeau={bandeau} fermer={() => setRecadrer(false)} valider={onCadrage} />}
       <label className="o-libelle o-mt4" htmlFor={id}>Description de l'image</label>
       <input
         id={id}

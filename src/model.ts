@@ -7,6 +7,22 @@ export interface Img {
   src: string | null; // image en data URL, ou null tant qu'aucune image n'est choisie
   alt: string;
   nom: string; // nom du fichier, ou texte affiché dans la zone provisoire
+  /** Recadrage choisi par l'élève (absent : image centrée, sans zoom). */
+  cadrage?: Cadrage;
+}
+
+/** Partie visible d'une image dans son cadre : point visé (en % de l'image) et zoom (1 à 3). */
+export interface Cadrage { x: number; y: number; zoom: number }
+export const CADRAGE_CENTRE: Cadrage = { x: 50, y: 50, zoom: 1 };
+const borne = (v: number, a: number, b: number, d: number) => (Number.isFinite(v) ? Math.min(b, Math.max(a, v)) : d);
+export const bornerCadrage = (c: Cadrage): Cadrage => ({
+  x: Math.round(borne(c.x, 0, 100, 50) * 10) / 10, y: Math.round(borne(c.y, 0, 100, 50) * 10) / 10, zoom: Math.round(borne(c.zoom, 1, 3, 1) * 100) / 100,
+});
+/** Style de l'image dans son cadre (object-fit: cover) : la position choisit la partie visible, le zoom l'agrandit autour d'elle. */
+export function styleCadrage(c?: Cadrage): { objectPosition: string; transform?: string; transformOrigin: string } | undefined {
+  if (!c) return undefined;
+  const b = bornerCadrage(c), pos = `${b.x}% ${b.y}%`;
+  return { objectPosition: pos, transform: b.zoom > 1 ? `scale(${b.zoom})` : undefined, transformOrigin: pos };
 }
 
 export type Fond = 'aucun' | 'douce' | 'principale';

@@ -708,3 +708,22 @@ select.o-champ{padding:0 10px}
 .o-fiche-titre{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;font-size:17px}
 .o-fiche .o-vignette{width:52px;height:40px}
 .o-fiche .o-btn{padding-left:10px;padding-right:10px;min-width:0}
+
+/* Recadrer une image */
+.o-vignette-cadre{display:block;overflow:hidden;position:relative}
+.o-vignette-cadre img{width:100%;height:100%;object-fit:cover;display:block}
+.o-recadrer-btn{align-self:flex-start;text-align:left;justify-content:flex-start}
+.o-recadrer-btn.recadree{color:var(--v-action, inherit)}
+.o-voile-recadrer{position:fixed;inset:0;z-index:120;background:rgba(15,23,42,.55);display:grid;place-items:center;padding:16px}
+.o-recadrer{background:#FFFFFF;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.3);padding:20px 22px;display:flex;flex-direction:column;gap:14px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow:auto}
+.o-recadrer-tete{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.o-recadrer-tete h2{margin:0;display:flex;align-items:center;gap:8px}
+.o-recadrer-cadre{position:relative;overflow:hidden;border-radius:10px;background:#E5E7EB;cursor:grab;touch-action:none;user-select:none;margin:0 auto;max-width:100%}
+.o-recadrer-cadre:active{cursor:grabbing}
+.o-recadrer-cadre img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.o-recadrer-cache{position:absolute;left:4%;bottom:0;width:52%;height:34%;border-radius:10px 10px 0 0;background:rgba(255,255,255,.72);border:2px dashed rgba(15,23,42,.35);display:grid;place-items:center;text-align:center;font-size:13px;font-weight:700;color:#334155;padding:6px;pointer-events:none}
+.o-recadrer-main{position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;background:rgba(15,23,42,.65);color:#fff;font-size:13px;font-weight:700;pointer-events:none}
+.o-recadrer-zoom{display:flex;align-items:center;gap:10px}
+.o-recadrer-zoom input{flex:1}
+.o-recadrer-pct{min-width:52px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.o-recadrer-pied{align-items:center}
